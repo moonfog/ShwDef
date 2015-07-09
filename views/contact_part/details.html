@@ -1,0 +1,14 @@
+{{extend 'layout.html'}}
+<fieldset><u><h4>{{=T('Contact')}} :</h4></u>
+<br/>
+<strong>{{=T('Date')}} : {{=contact_date}}</strong>
+<br/>
+<strong>{{=T('Guest')}} : {{=guest}}</strong>
+<br/>
+<strong>{{=T('Neighbourhood')}} : {{=neighbourhood}}</strong></fieldset>
+<fieldset>
+<u><h4>{{=T('Details contact part')}} :</h4></u>
+<br/>
+{{=form}}
+{{=INPUT(_value=T("Back"),_onclick="javascript:void(history.go(-1))",_type="button")}}
+</fieldset>

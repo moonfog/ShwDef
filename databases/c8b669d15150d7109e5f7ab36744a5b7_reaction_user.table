@@ -1,0 +1,58 @@
+(dp1
+S'content'
+p2
+(dp3
+S'type'
+p4
+S'reference value'
+p5
+sS'sortable'
+p6
+I4
+sS'sql'
+p7
+S'INTEGER REFERENCES value(id) ON DELETE CASCADE'
+p8
+ssg4
+(dp9
+g4
+S'reference value'
+p10
+sg6
+I3
+sg7
+S'INTEGER REFERENCES value(id) ON DELETE CASCADE'
+p11
+ssS'contact_part'
+p12
+(dp13
+g4
+S'reference contact_part'
+p14
+sg6
+I2
+sg7
+S'INTEGER REFERENCES contact_part(id) ON DELETE CASCADE'
+p15
+ssS'id'
+p16
+(dp17
+g4
+g16
+sg6
+I1
+sg7
+S'INTEGER PRIMARY KEY AUTOINCREMENT'
+p18
+ssS'description'
+p19
+(dp20
+g4
+S'text'
+p21
+sg6
+I5
+sg7
+S'TEXT'
+p22
+ss.

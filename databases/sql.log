@@ -1,0 +1,2409 @@
+timestamp: 2012-08-27T00:24:20.041000
+CREATE TABLE user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2012-08-27T00:24:20.284000
+CREATE TABLE group_role(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2012-08-27T00:24:20.303000
+CREATE TABLE group_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES user(id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES group_role(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-08-27T00:24:20.330000
+CREATE TABLE permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES group_role(id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2012-08-27T00:24:20.544000
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES user(id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2012-08-27T00:24:20.578000
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES user(id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2012-08-27T00:24:21.014000
+CREATE TABLE country(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    continent CHAR(512) NOT NULL,
+    country_lang1 CHAR(512),
+    country_lang2 CHAR(512),
+    country_lang3 CHAR(512)
+);
+success!
+timestamp: 2012-08-27T00:24:21.076000
+CREATE TABLE category(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category CHAR(512) NOT NULL UNIQUE
+);
+success!
+timestamp: 2012-08-27T00:24:21.114000
+CREATE TABLE value(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cat INTEGER REFERENCES category(id) ON DELETE CASCADE,
+    val_lang1 CHAR(512),
+    val_lang2 CHAR(512),
+    val_lang3 CHAR(512),
+    deleted CHAR(1)
+);
+success!
+timestamp: 2012-08-27T00:24:21.159000
+CREATE TABLE guest(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512) NOT NULL,
+    sex INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    birth_year INTEGER NOT NULL,
+    origin INTEGER REFERENCES country(id) ON DELETE CASCADE,
+    nationality INTEGER REFERENCES country(id) ON DELETE CASCADE,
+    education INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL,
+    user INTEGER REFERENCES user(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-08-27T00:24:21.377000
+CREATE TABLE contact(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guest INTEGER REFERENCES guest(id) ON DELETE CASCADE,
+    neighbourhood INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    created_by CHAR(512)
+);
+success!
+timestamp: 2012-08-27T00:24:21.419000
+CREATE TABLE condition_guest(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    guest INTEGER REFERENCES guest(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    financial INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    family INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    gainings INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    physical INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    mental INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    residence INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    housing INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    justice INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    drug INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    current_study INTEGER REFERENCES value(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-08-27T00:24:21.455000
+CREATE TABLE contact_part(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    contact INTEGER REFERENCES contact(id) ON DELETE CASCADE,
+    subject INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    story TEXT NOT NULL,
+    indirect CHAR(1)
+);
+success!
+timestamp: 2012-08-27T00:24:21.666000
+CREATE TABLE contact_part_tag(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    contact_part INTEGER REFERENCES contact_part(id) ON DELETE CASCADE,
+    tag INTEGER REFERENCES value(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-08-27T00:24:21.702000
+CREATE TABLE reaction_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    contact_part INTEGER REFERENCES contact_part(id) ON DELETE CASCADE,
+    type INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    content INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    description TEXT
+);
+success!
+timestamp: 2012-08-27T00:24:21.740000
+CREATE TABLE signal_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user INTEGER REFERENCES user(id) ON DELETE CASCADE,
+    title CHAR(512) NOT NULL,
+    subject INTEGER REFERENCES value(id) ON DELETE CASCADE,
+    description TEXT NOT NULL,
+    date DATE NOT NULL
+);
+success!
+timestamp: 2012-08-27T00:24:21.782000
+CREATE TABLE signal_user_tag(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    signal_user INTEGER REFERENCES signal_user(id) ON DELETE CASCADE,
+    tag INTEGER REFERENCES value(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2012-09-11T11:14:11.399000
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    registration_key VARCHAR(255),
+    reset_password_key VARCHAR(255),
+    registration_id VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:12.797000
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:13.037000
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:13.594000
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role(id) ON DELETE CASCADE,
+    name VARCHAR(255),
+    table_name VARCHAR(255),
+    record_id INT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:14.273000
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(255),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    origin VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:14.922000
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(255),
+    ticket VARCHAR(255),
+    renew CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:15.447000
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(255) NOT NULL,
+    country_lang1 VARCHAR(255),
+    country_lang2 VARCHAR(255),
+    country_lang3 VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:15.763000
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:16.180000
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category(id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(255),
+    val_lang2 VARCHAR(255),
+    val_lang3 VARCHAR(255),
+    deleted CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:16.422000
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value(id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country(id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country(id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value(id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:17.431000
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    created_by VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:17.673000
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value(id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value(id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value(id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value(id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value(id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value(id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value(id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value(id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value(id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:18.109000
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact(id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:18.204000
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part(id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:18.372000
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part(id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value(id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value(id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:18.750000
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T11:14:19.069000
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user(id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.011121
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    registration_key VARCHAR(255),
+    reset_password_key VARCHAR(255),
+    registration_id VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.143150
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.257799
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.473565
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role(id) ON DELETE CASCADE,
+    name VARCHAR(255),
+    table_name VARCHAR(255),
+    record_id INT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.600450
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(255),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    origin VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.686774
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(255),
+    ticket VARCHAR(255),
+    renew CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.820206
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(255) NOT NULL,
+    country_lang1 VARCHAR(255),
+    country_lang2 VARCHAR(255),
+    country_lang3 VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:43.912212
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:44.042029
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category(id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(255),
+    val_lang2 VARCHAR(255),
+    val_lang3 VARCHAR(255),
+    deleted CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:44.165517
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value(id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country(id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country(id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value(id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:44.405031
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    created_by VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:44.549731
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value(id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value(id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value(id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value(id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value(id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value(id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value(id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value(id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value(id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:44.864793
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact(id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:45.011758
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part(id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:45.158545
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part(id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value(id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value(id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:45.286533
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:47:45.381590
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user(id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.303992
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    registration_key VARCHAR(255),
+    reset_password_key VARCHAR(255),
+    registration_id VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.390221
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.448168
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.542395
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role(id) ON DELETE CASCADE,
+    name VARCHAR(255),
+    table_name VARCHAR(255),
+    record_id INT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.690219
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(255),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    origin VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.804394
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(255),
+    ticket VARCHAR(255),
+    renew CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:54.891432
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(255) NOT NULL,
+    country_lang1 VARCHAR(255),
+    country_lang2 VARCHAR(255),
+    country_lang3 VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.002984
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.089926
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category(id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(255),
+    val_lang2 VARCHAR(255),
+    val_lang3 VARCHAR(255),
+    deleted CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.189301
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value(id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country(id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country(id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value(id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.345009
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    created_by VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.433480
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value(id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value(id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value(id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value(id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value(id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value(id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value(id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value(id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value(id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.688697
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact(id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.793046
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part(id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:55.880764
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part(id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value(id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value(id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:56.008909
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2012-09-11T10:59:56.078318
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user(id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value(id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2014-03-11T11:09:46.323418
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    registration_key VARCHAR(255),
+    reset_password_key VARCHAR(255),
+    registration_id VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.324832
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.326155
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.327589
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    name VARCHAR(255),
+    table_name VARCHAR(255),
+    record_id INT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.329346
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(255),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    origin VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.330808
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(255),
+    ticket VARCHAR(255),
+    renew CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.332473
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(255) NOT NULL,
+    country_lang1 VARCHAR(255),
+    country_lang2 VARCHAR(255),
+    country_lang3 VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.333505
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.334942
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category (id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(255),
+    val_lang2 VARCHAR(255),
+    val_lang3 VARCHAR(255),
+    deleted CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.337997
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value (id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country (id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country (id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value (id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL DEFAULT '2014-03-11',
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.452812
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2014-03-11',
+    created_by VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.572963
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2014-03-11',
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value (id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value (id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value (id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value (id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value (id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value (id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value (id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value (id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value (id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.668467
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact (id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.684501
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.714241
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value (id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.727022
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL DEFAULT '2014-03-11',
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:09:46.741128
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-11T11:53:39.134062
+ALTER TABLE guest ADD age VARCHAR(255);
+faked!
+timestamp: 2014-03-11T11:53:39.205469
+ALTER TABLE contact ADD simple_contact CHAR(1);
+faked!
+timestamp: 2014-03-21T08:21:38.873547
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(255),
+    password VARCHAR(255),
+    registration_key VARCHAR(255),
+    reset_password_key VARCHAR(255),
+    registration_id VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.919317
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.921011
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.922940
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    name VARCHAR(255),
+    table_name VARCHAR(255),
+    record_id INT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.924969
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(255),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    origin VARCHAR(255),
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.926801
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(255),
+    ticket VARCHAR(255),
+    renew CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.928744
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(255) NOT NULL,
+    country_lang1 VARCHAR(255),
+    country_lang2 VARCHAR(255),
+    country_lang3 VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.929903
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.931434
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category (id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(255),
+    val_lang2 VARCHAR(255),
+    val_lang3 VARCHAR(255),
+    deleted CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:38.934717
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value (id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country (id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country (id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value (id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL DEFAULT '2014-03-21',
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    age VARCHAR(255),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:21:39.192705
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2014-03-21',
+    created_by VARCHAR(255),
+    simple_contact CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:26:54.455470
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2014-03-21',
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value (id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value (id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value (id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value (id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value (id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value (id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value (id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value (id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value (id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:26:54.589291
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact (id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:26:54.603865
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:26:54.634696
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value (id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:26:54.646500
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL DEFAULT '2014-03-21',
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-03-21T08:26:54.661343
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY(id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.003804
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(512),
+    password VARCHAR(512),
+    registration_key VARCHAR(512),
+    reset_password_key VARCHAR(512),
+    registration_id VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.031265
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.049571
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.272659
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    name VARCHAR(512),
+    table_name VARCHAR(512),
+    record_id INT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.297193
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(512),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    origin VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.318504
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(512),
+    ticket VARCHAR(512),
+    renew CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.338200
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(512) NOT NULL,
+    country_lang1 VARCHAR(512),
+    country_lang2 VARCHAR(512),
+    country_lang3 VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.350742
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(512) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.370665
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category (id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(512),
+    val_lang2 VARCHAR(512),
+    val_lang3 VARCHAR(512),
+    deleted CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.410605
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(512) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value (id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country (id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country (id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value (id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL DEFAULT '2014-07-08',
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    age VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:23.955057
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2014-07-08',
+    created_by VARCHAR(512),
+    simple_contact CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:24.896922
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2014-07-08',
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value (id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value (id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value (id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value (id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value (id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value (id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value (id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value (id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value (id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:27.435388
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact (id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:27.893846
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:28.214294
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value (id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:28.382257
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    title VARCHAR(512) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL DEFAULT '2014-07-08',
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2014-07-08T13:40:28.546703
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:53.986365
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(512),
+    password VARCHAR(512),
+    registration_key VARCHAR(512),
+    reset_password_key VARCHAR(512),
+    registration_id VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.021198
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.037493
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.057154
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    name VARCHAR(512),
+    table_name VARCHAR(512),
+    record_id INT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.079001
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(512),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    origin VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.099180
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(512),
+    ticket VARCHAR(512),
+    renew CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.117054
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(512) NOT NULL,
+    country_lang1 VARCHAR(512),
+    country_lang2 VARCHAR(512),
+    country_lang3 VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.127232
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(512) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.146014
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category (id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(512),
+    val_lang2 VARCHAR(512),
+    val_lang3 VARCHAR(512),
+    deleted CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.183405
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(512) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value (id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country (id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country (id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value (id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL DEFAULT '2015-02-13',
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    age VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:18:54.677367
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2015-02-13',
+    created_by VARCHAR(512),
+    simple_contact CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:25:32.815524
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2015-02-13',
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value (id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value (id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value (id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value (id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value (id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value (id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value (id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value (id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value (id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:25:33.365886
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact (id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:25:33.444375
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:25:33.616402
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value (id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:25:33.677415
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    title VARCHAR(512) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL DEFAULT '2015-02-13',
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-13T10:25:33.756248
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.226057
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(512),
+    password VARCHAR(512),
+    registration_key VARCHAR(512),
+    reset_password_key VARCHAR(512),
+    registration_id VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.264589
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.282022
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.306197
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    name VARCHAR(512),
+    table_name VARCHAR(512),
+    record_id INT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.329060
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(512),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    origin VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.351334
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(512),
+    ticket VARCHAR(512),
+    renew CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.377387
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(512) NOT NULL,
+    country_lang1 VARCHAR(512),
+    country_lang2 VARCHAR(512),
+    country_lang3 VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.391382
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(512) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.410325
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category (id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(512),
+    val_lang2 VARCHAR(512),
+    val_lang3 VARCHAR(512),
+    deleted CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.448114
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(512) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value (id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country (id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country (id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value (id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL DEFAULT '2015-02-27',
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    age VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:02.965985
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2015-02-27',
+    created_by VARCHAR(512),
+    simple_contact CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:03.900483
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2015-02-27',
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value (id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value (id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value (id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value (id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value (id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value (id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value (id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value (id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value (id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:06.476002
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact (id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:06.835664
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:07.652136
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value (id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:07.928437
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    title VARCHAR(512) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL DEFAULT '2015-02-27',
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-02-27T14:25:08.294405
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.788341
+CREATE TABLE user(
+    id INT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    email VARCHAR(512),
+    password VARCHAR(512),
+    registration_key VARCHAR(512),
+    reset_password_key VARCHAR(512),
+    registration_id VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.816223
+CREATE TABLE group_role(
+    id INT AUTO_INCREMENT NOT NULL,
+    role VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.832323
+CREATE TABLE group_membership(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.850861
+CREATE TABLE permission(
+    id INT AUTO_INCREMENT NOT NULL,
+    group_id INT, INDEX group_id__idx (group_id), FOREIGN KEY (group_id) REFERENCES group_role (id) ON DELETE CASCADE,
+    name VARCHAR(512),
+    table_name VARCHAR(512),
+    record_id INT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.871029
+CREATE TABLE auth_event(
+    id INT AUTO_INCREMENT NOT NULL,
+    time_stamp DATETIME,
+    client_ip VARCHAR(512),
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    origin VARCHAR(512),
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.891443
+CREATE TABLE auth_cas(
+    id INT AUTO_INCREMENT NOT NULL,
+    user_id INT, INDEX user_id__idx (user_id), FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    created_on DATETIME,
+    service VARCHAR(512),
+    ticket VARCHAR(512),
+    renew CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.909246
+CREATE TABLE country(
+    id INT AUTO_INCREMENT NOT NULL,
+    continent VARCHAR(512) NOT NULL,
+    country_lang1 VARCHAR(512),
+    country_lang2 VARCHAR(512),
+    country_lang3 VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.918914
+CREATE TABLE category(
+    id INT AUTO_INCREMENT NOT NULL,
+    category VARCHAR(512) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.937198
+CREATE TABLE value(
+    id INT AUTO_INCREMENT NOT NULL,
+    cat INT, INDEX cat__idx (cat), FOREIGN KEY (cat) REFERENCES category (id) ON DELETE CASCADE,
+    val_lang1 VARCHAR(512),
+    val_lang2 VARCHAR(512),
+    val_lang3 VARCHAR(512),
+    deleted CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:17.974355
+CREATE TABLE guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    name VARCHAR(512) NOT NULL,
+    sex INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value (id) ON DELETE CASCADE,
+    birth_year INT NOT NULL,
+    origin INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country (id) ON DELETE CASCADE,
+    nationality INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country (id) ON DELETE CASCADE,
+    education INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value (id) ON DELETE CASCADE,
+    registration_date DATE NOT NULL DEFAULT '2015-03-03',
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    age VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:18.506130
+CREATE TABLE contact(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    neighbourhood INT, INDEX neighbourhood__idx (neighbourhood), FOREIGN KEY (neighbourhood) REFERENCES value (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2015-03-03',
+    created_by VARCHAR(512),
+    simple_contact CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:19.450212
+CREATE TABLE condition_guest(
+    id INT AUTO_INCREMENT NOT NULL,
+    guest INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest (id) ON DELETE CASCADE,
+    date DATE NOT NULL DEFAULT '2015-03-03',
+    financial INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value (id) ON DELETE CASCADE,
+    family INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value (id) ON DELETE CASCADE,
+    gainings INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value (id) ON DELETE CASCADE,
+    physical INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value (id) ON DELETE CASCADE,
+    mental INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value (id) ON DELETE CASCADE,
+    residence INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value (id) ON DELETE CASCADE,
+    housing INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value (id) ON DELETE CASCADE,
+    justice INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value (id) ON DELETE CASCADE,
+    drug INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value (id) ON DELETE CASCADE,
+    current_study INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:22.118124
+CREATE TABLE contact_part(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact (id) ON DELETE CASCADE,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    story LONGTEXT NOT NULL,
+    indirect CHAR(1),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:22.480121
+CREATE TABLE contact_part_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:23.289437
+CREATE TABLE reaction_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    contact_part INT, INDEX contact_part__idx (contact_part), FOREIGN KEY (contact_part) REFERENCES contact_part (id) ON DELETE CASCADE,
+    type INT, INDEX type__idx (type), FOREIGN KEY (type) REFERENCES value (id) ON DELETE CASCADE,
+    content INT, INDEX content__idx (content), FOREIGN KEY (content) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:23.576392
+CREATE TABLE signal_user(
+    id INT AUTO_INCREMENT NOT NULL,
+    user INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user (id) ON DELETE CASCADE,
+    title VARCHAR(512) NOT NULL,
+    subject INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value (id) ON DELETE CASCADE,
+    description LONGTEXT NOT NULL,
+    date DATE NOT NULL DEFAULT '2015-03-03',
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:40:23.951358
+CREATE TABLE signal_user_tag(
+    id INT AUTO_INCREMENT NOT NULL,
+    signal_user INT, INDEX signal_user__idx (signal_user), FOREIGN KEY (signal_user) REFERENCES signal_user (id) ON DELETE CASCADE,
+    tag INT, INDEX tag__idx (tag), FOREIGN KEY (tag) REFERENCES value (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+faked!
+timestamp: 2015-03-03T11:52:03.567429
+ALTER TABLE user ADD registration_id__tmp VARCHAR(512);
+faked!
+UPDATE user SET registration_id__tmp=registration_id;
+faked!
+ALTER TABLE user DROP COLUMN registration_id;
+faked!
+ALTER TABLE user ADD registration_id VARCHAR(512);
+faked!
+UPDATE user SET registration_id=registration_id__tmp;
+faked!
+ALTER TABLE user DROP COLUMN registration_id__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.571006
+ALTER TABLE user ADD reset_password_key__tmp VARCHAR(512);
+faked!
+UPDATE user SET reset_password_key__tmp=reset_password_key;
+faked!
+ALTER TABLE user DROP COLUMN reset_password_key;
+faked!
+ALTER TABLE user ADD reset_password_key VARCHAR(512);
+faked!
+UPDATE user SET reset_password_key=reset_password_key__tmp;
+faked!
+ALTER TABLE user DROP COLUMN reset_password_key__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.573942
+ALTER TABLE user ADD password__tmp VARCHAR(512);
+faked!
+UPDATE user SET password__tmp=password;
+faked!
+ALTER TABLE user DROP COLUMN password;
+faked!
+ALTER TABLE user ADD password VARCHAR(512);
+faked!
+UPDATE user SET password=password__tmp;
+faked!
+ALTER TABLE user DROP COLUMN password__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.576890
+ALTER TABLE user ADD registration_key__tmp VARCHAR(512);
+faked!
+UPDATE user SET registration_key__tmp=registration_key;
+faked!
+ALTER TABLE user DROP COLUMN registration_key;
+faked!
+ALTER TABLE user ADD registration_key VARCHAR(512);
+faked!
+UPDATE user SET registration_key=registration_key__tmp;
+faked!
+ALTER TABLE user DROP COLUMN registration_key__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.580495
+ALTER TABLE user ADD email__tmp VARCHAR(512);
+faked!
+UPDATE user SET email__tmp=email;
+faked!
+ALTER TABLE user DROP COLUMN email;
+faked!
+ALTER TABLE user ADD email VARCHAR(512);
+faked!
+UPDATE user SET email=email__tmp;
+faked!
+ALTER TABLE user DROP COLUMN email__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.586414
+ALTER TABLE group_role ADD role__tmp VARCHAR(512);
+faked!
+UPDATE group_role SET role__tmp=role;
+faked!
+ALTER TABLE group_role DROP COLUMN role;
+faked!
+ALTER TABLE group_role ADD role VARCHAR(512);
+faked!
+UPDATE group_role SET role=role__tmp;
+faked!
+ALTER TABLE group_role DROP COLUMN role__tmp;
+faked!
+success!
+timestamp: 2015-03-03T11:52:03.599431
+ALTER TABLE permission ADD table_name__tmp VARCHAR(512);
+faked!
+UPDATE permission SET table_name__tmp=table_name;
+faked!
+ALTER TABLE permission DROP COLUMN table_name;
+faked!
+ALTER TABLE permission ADD table_name VARCHAR(512);
+faked!
+UPDATE permission SET table_name=table_name__tmp;
+faked!
+ALTER TABLE permission DROP COLUMN table_name__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.602654
+ALTER TABLE permission ADD name__tmp VARCHAR(512);
+faked!
+UPDATE permission SET name__tmp=name;
+faked!
+ALTER TABLE permission DROP COLUMN name;
+faked!
+ALTER TABLE permission ADD name VARCHAR(512);
+faked!
+UPDATE permission SET name=name__tmp;
+faked!
+ALTER TABLE permission DROP COLUMN name__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.609907
+ALTER TABLE auth_event ADD origin__tmp VARCHAR(512);
+faked!
+UPDATE auth_event SET origin__tmp=origin;
+faked!
+ALTER TABLE auth_event DROP COLUMN origin;
+faked!
+ALTER TABLE auth_event ADD origin VARCHAR(512);
+faked!
+UPDATE auth_event SET origin=origin__tmp;
+faked!
+ALTER TABLE auth_event DROP COLUMN origin__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.612836
+ALTER TABLE auth_event ADD client_ip__tmp VARCHAR(512);
+faked!
+UPDATE auth_event SET client_ip__tmp=client_ip;
+faked!
+ALTER TABLE auth_event DROP COLUMN client_ip;
+faked!
+ALTER TABLE auth_event ADD client_ip VARCHAR(512);
+faked!
+UPDATE auth_event SET client_ip=client_ip__tmp;
+faked!
+ALTER TABLE auth_event DROP COLUMN client_ip__tmp;
+faked!
+success!
+timestamp: 2015-03-03T11:52:03.621918
+ALTER TABLE auth_cas ADD service__tmp VARCHAR(512);
+faked!
+UPDATE auth_cas SET service__tmp=service;
+faked!
+ALTER TABLE auth_cas DROP COLUMN service;
+faked!
+ALTER TABLE auth_cas ADD service VARCHAR(512);
+faked!
+UPDATE auth_cas SET service=service__tmp;
+faked!
+ALTER TABLE auth_cas DROP COLUMN service__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.625457
+ALTER TABLE auth_cas ADD ticket__tmp VARCHAR(512);
+faked!
+UPDATE auth_cas SET ticket__tmp=ticket;
+faked!
+ALTER TABLE auth_cas DROP COLUMN ticket;
+faked!
+ALTER TABLE auth_cas ADD ticket VARCHAR(512);
+faked!
+UPDATE auth_cas SET ticket=ticket__tmp;
+faked!
+ALTER TABLE auth_cas DROP COLUMN ticket__tmp;
+faked!
+success!
+timestamp: 2015-03-03T11:52:03.633279
+ALTER TABLE country ADD country_lang2__tmp VARCHAR(512);
+faked!
+UPDATE country SET country_lang2__tmp=country_lang2;
+faked!
+ALTER TABLE country DROP COLUMN country_lang2;
+faked!
+ALTER TABLE country ADD country_lang2 VARCHAR(512);
+faked!
+UPDATE country SET country_lang2=country_lang2__tmp;
+faked!
+ALTER TABLE country DROP COLUMN country_lang2__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.636408
+ALTER TABLE country ADD country_lang3__tmp VARCHAR(512);
+faked!
+UPDATE country SET country_lang3__tmp=country_lang3;
+faked!
+ALTER TABLE country DROP COLUMN country_lang3;
+faked!
+ALTER TABLE country ADD country_lang3 VARCHAR(512);
+faked!
+UPDATE country SET country_lang3=country_lang3__tmp;
+faked!
+ALTER TABLE country DROP COLUMN country_lang3__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.639200
+ALTER TABLE country ADD country_lang1__tmp VARCHAR(512);
+faked!
+UPDATE country SET country_lang1__tmp=country_lang1;
+faked!
+ALTER TABLE country DROP COLUMN country_lang1;
+faked!
+ALTER TABLE country ADD country_lang1 VARCHAR(512);
+faked!
+UPDATE country SET country_lang1=country_lang1__tmp;
+faked!
+ALTER TABLE country DROP COLUMN country_lang1__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.642391
+ALTER TABLE country ADD continent__tmp VARCHAR(512) NOT NULL;
+faked!
+UPDATE country SET continent__tmp=continent;
+faked!
+ALTER TABLE country DROP COLUMN continent;
+faked!
+ALTER TABLE country ADD continent VARCHAR(512) NOT NULL;
+faked!
+UPDATE country SET continent=continent__tmp;
+faked!
+ALTER TABLE country DROP COLUMN continent__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.647556
+ALTER TABLE category ADD category__tmp VARCHAR(512) NOT NULL UNIQUE;
+faked!
+UPDATE category SET category__tmp=category;
+faked!
+ALTER TABLE category DROP COLUMN category;
+faked!
+ALTER TABLE category ADD category VARCHAR(512) NOT NULL UNIQUE;
+faked!
+UPDATE category SET category=category__tmp;
+faked!
+ALTER TABLE category DROP COLUMN category__tmp;
+faked!
+success!
+timestamp: 2015-03-03T11:52:03.657032
+ALTER TABLE value ADD val_lang1__tmp VARCHAR(512);
+faked!
+UPDATE value SET val_lang1__tmp=val_lang1;
+faked!
+ALTER TABLE value DROP COLUMN val_lang1;
+faked!
+ALTER TABLE value ADD val_lang1 VARCHAR(512);
+faked!
+UPDATE value SET val_lang1=val_lang1__tmp;
+faked!
+ALTER TABLE value DROP COLUMN val_lang1__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.660008
+ALTER TABLE value ADD val_lang3__tmp VARCHAR(512);
+faked!
+UPDATE value SET val_lang3__tmp=val_lang3;
+faked!
+ALTER TABLE value DROP COLUMN val_lang3;
+faked!
+ALTER TABLE value ADD val_lang3 VARCHAR(512);
+faked!
+UPDATE value SET val_lang3=val_lang3__tmp;
+faked!
+ALTER TABLE value DROP COLUMN val_lang3__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.662784
+ALTER TABLE value ADD val_lang2__tmp VARCHAR(512);
+faked!
+UPDATE value SET val_lang2__tmp=val_lang2;
+faked!
+ALTER TABLE value DROP COLUMN val_lang2;
+faked!
+ALTER TABLE value ADD val_lang2 VARCHAR(512);
+faked!
+UPDATE value SET val_lang2=val_lang2__tmp;
+faked!
+ALTER TABLE value DROP COLUMN val_lang2__tmp;
+faked!
+success!
+timestamp: 2015-03-03T11:52:03.674884
+ALTER TABLE guest ADD name__tmp VARCHAR(512) NOT NULL;
+faked!
+UPDATE guest SET name__tmp=name;
+faked!
+ALTER TABLE guest DROP COLUMN name;
+faked!
+ALTER TABLE guest ADD name VARCHAR(512) NOT NULL;
+faked!
+UPDATE guest SET name=name__tmp;
+faked!
+ALTER TABLE guest DROP COLUMN name__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.678013
+ALTER TABLE guest ADD age VARCHAR(512);
+faked!
+success!
+timestamp: 2015-03-03T11:52:03.796354
+ALTER TABLE contact ADD created_by__tmp VARCHAR(512);
+faked!
+UPDATE contact SET created_by__tmp=created_by;
+faked!
+ALTER TABLE contact DROP COLUMN created_by;
+faked!
+ALTER TABLE contact ADD created_by VARCHAR(512);
+faked!
+UPDATE contact SET created_by=created_by__tmp;
+faked!
+ALTER TABLE contact DROP COLUMN created_by__tmp;
+faked!
+timestamp: 2015-03-03T11:52:03.799726
+ALTER TABLE contact ADD simple_contact CHAR(1);
+faked!
+success!
+timestamp: 2015-03-03T11:52:04.955388
+ALTER TABLE signal_user ADD title__tmp VARCHAR(512) NOT NULL;
+faked!
+UPDATE signal_user SET title__tmp=title;
+faked!
+ALTER TABLE signal_user DROP COLUMN title;
+faked!
+ALTER TABLE signal_user ADD title VARCHAR(512) NOT NULL;
+faked!
+UPDATE signal_user SET title=title__tmp;
+faked!
+ALTER TABLE signal_user DROP COLUMN title__tmp;
+faked!
+success!
+timestamp: 2015-04-03T09:39:35.080662
+ALTER TABLE user ADD registration_id__tmp VARCHAR(512);
+success!
+UPDATE user SET registration_id__tmp=registration_id;
+success!
+ALTER TABLE user DROP COLUMN registration_id;
+success!
+ALTER TABLE user ADD registration_id VARCHAR(512);
+success!
+UPDATE user SET registration_id=registration_id__tmp;
+success!
+ALTER TABLE user DROP COLUMN registration_id__tmp;
+success!
+timestamp: 2015-04-03T09:39:35.741588
+ALTER TABLE user ADD reset_password_key__tmp VARCHAR(512);
+success!
+UPDATE user SET reset_password_key__tmp=reset_password_key;
+success!
+ALTER TABLE user DROP COLUMN reset_password_key;
+success!
+ALTER TABLE user ADD reset_password_key VARCHAR(512);
+success!
+UPDATE user SET reset_password_key=reset_password_key__tmp;
+success!
+ALTER TABLE user DROP COLUMN reset_password_key__tmp;
+success!
+timestamp: 2015-04-03T09:39:36.521825
+ALTER TABLE user ADD password__tmp VARCHAR(512);
+success!
+UPDATE user SET password__tmp=password;
+success!
+ALTER TABLE user DROP COLUMN password;
+success!
+ALTER TABLE user ADD password VARCHAR(512);
+success!
+UPDATE user SET password=password__tmp;
+success!
+ALTER TABLE user DROP COLUMN password__tmp;
+success!
+timestamp: 2015-04-03T09:39:37.220135
+ALTER TABLE user ADD registration_key__tmp VARCHAR(512);
+success!
+UPDATE user SET registration_key__tmp=registration_key;
+success!
+ALTER TABLE user DROP COLUMN registration_key;
+success!
+ALTER TABLE user ADD registration_key VARCHAR(512);
+success!
+UPDATE user SET registration_key=registration_key__tmp;
+success!
+ALTER TABLE user DROP COLUMN registration_key__tmp;
+success!
+timestamp: 2015-04-03T09:39:37.834447
+ALTER TABLE user ADD email__tmp VARCHAR(512);
+success!
+UPDATE user SET email__tmp=email;
+success!
+ALTER TABLE user DROP COLUMN email;
+success!
+ALTER TABLE user ADD email VARCHAR(512);
+success!
+UPDATE user SET email=email__tmp;
+success!
+ALTER TABLE user DROP COLUMN email__tmp;
+success!
+timestamp: 2015-04-03T09:39:38.650272
+ALTER TABLE group_role ADD role__tmp VARCHAR(512);
+success!
+UPDATE group_role SET role__tmp=role;
+success!
+ALTER TABLE group_role DROP COLUMN role;
+success!
+ALTER TABLE group_role ADD role VARCHAR(512);
+success!
+UPDATE group_role SET role=role__tmp;
+success!
+ALTER TABLE group_role DROP COLUMN role__tmp;
+success!
+success!
+timestamp: 2015-04-03T09:39:39.410417
+ALTER TABLE permission ADD table_name__tmp VARCHAR(512);
+success!
+UPDATE permission SET table_name__tmp=table_name;
+success!
+ALTER TABLE permission DROP COLUMN table_name;
+success!
+ALTER TABLE permission ADD table_name VARCHAR(512);
+success!
+UPDATE permission SET table_name=table_name__tmp;
+success!
+ALTER TABLE permission DROP COLUMN table_name__tmp;
+success!
+timestamp: 2015-04-03T09:39:40.025909
+ALTER TABLE permission ADD name__tmp VARCHAR(512);
+success!
+UPDATE permission SET name__tmp=name;
+success!
+ALTER TABLE permission DROP COLUMN name;
+success!
+ALTER TABLE permission ADD name VARCHAR(512);
+success!
+UPDATE permission SET name=name__tmp;
+success!
+ALTER TABLE permission DROP COLUMN name__tmp;
+success!
+timestamp: 2015-04-03T09:39:40.649736
+ALTER TABLE auth_event ADD origin__tmp VARCHAR(512);
+success!
+UPDATE auth_event SET origin__tmp=origin;
+success!
+ALTER TABLE auth_event DROP COLUMN origin;
+success!
+ALTER TABLE auth_event ADD origin VARCHAR(512);
+success!
+UPDATE auth_event SET origin=origin__tmp;
+success!
+ALTER TABLE auth_event DROP COLUMN origin__tmp;
+success!
+timestamp: 2015-04-03T09:39:41.704040
+ALTER TABLE auth_event ADD client_ip__tmp VARCHAR(512);
+success!
+UPDATE auth_event SET client_ip__tmp=client_ip;
+success!
+ALTER TABLE auth_event DROP COLUMN client_ip;
+success!
+ALTER TABLE auth_event ADD client_ip VARCHAR(512);
+success!
+UPDATE auth_event SET client_ip=client_ip__tmp;
+success!
+ALTER TABLE auth_event DROP COLUMN client_ip__tmp;
+success!
+success!
+timestamp: 2015-04-03T09:39:42.906128
+ALTER TABLE auth_cas ADD service__tmp VARCHAR(512);
+success!
+UPDATE auth_cas SET service__tmp=service;
+success!
+ALTER TABLE auth_cas DROP COLUMN service;
+success!
+ALTER TABLE auth_cas ADD service VARCHAR(512);
+success!
+UPDATE auth_cas SET service=service__tmp;
+success!
+ALTER TABLE auth_cas DROP COLUMN service__tmp;
+success!
+timestamp: 2015-04-03T09:39:43.723566
+ALTER TABLE auth_cas ADD ticket__tmp VARCHAR(512);
+success!
+UPDATE auth_cas SET ticket__tmp=ticket;
+success!
+ALTER TABLE auth_cas DROP COLUMN ticket;
+success!
+ALTER TABLE auth_cas ADD ticket VARCHAR(512);
+success!
+UPDATE auth_cas SET ticket=ticket__tmp;
+success!
+ALTER TABLE auth_cas DROP COLUMN ticket__tmp;
+success!
+success!
+timestamp: 2015-04-03T09:39:44.659262
+ALTER TABLE country ADD country_lang2__tmp VARCHAR(512);
+success!
+UPDATE country SET country_lang2__tmp=country_lang2;
+success!
+ALTER TABLE country DROP COLUMN country_lang2;
+success!
+ALTER TABLE country ADD country_lang2 VARCHAR(512);
+success!
+UPDATE country SET country_lang2=country_lang2__tmp;
+success!
+ALTER TABLE country DROP COLUMN country_lang2__tmp;
+success!
+timestamp: 2015-04-03T09:39:45.588762
+ALTER TABLE country ADD country_lang3__tmp VARCHAR(512);
+success!
+UPDATE country SET country_lang3__tmp=country_lang3;
+success!
+ALTER TABLE country DROP COLUMN country_lang3;
+success!
+ALTER TABLE country ADD country_lang3 VARCHAR(512);
+success!
+UPDATE country SET country_lang3=country_lang3__tmp;
+success!
+ALTER TABLE country DROP COLUMN country_lang3__tmp;
+success!
+timestamp: 2015-04-03T09:39:46.662018
+ALTER TABLE country ADD country_lang1__tmp VARCHAR(512);
+success!
+UPDATE country SET country_lang1__tmp=country_lang1;
+success!
+ALTER TABLE country DROP COLUMN country_lang1;
+success!
+ALTER TABLE country ADD country_lang1 VARCHAR(512);
+success!
+UPDATE country SET country_lang1=country_lang1__tmp;
+success!
+ALTER TABLE country DROP COLUMN country_lang1__tmp;
+success!
+timestamp: 2015-04-03T09:39:47.439020
+ALTER TABLE country ADD continent__tmp VARCHAR(512) NOT NULL;
+success!
+UPDATE country SET continent__tmp=continent;
+success!
+ALTER TABLE country DROP COLUMN continent;
+success!
+ALTER TABLE country ADD continent VARCHAR(512) NOT NULL;
+success!
+UPDATE country SET continent=continent__tmp;
+success!
+ALTER TABLE country DROP COLUMN continent__tmp;
+success!
+timestamp: 2015-04-03T09:39:48.121913
+ALTER TABLE category ADD category__tmp VARCHAR(512) NOT NULL UNIQUE;
+timestamp: 2015-04-03T09:40:15.477482
+ALTER TABLE category ADD category__tmp VARCHAR(512) NOT NULL UNIQUE;
+timestamp: 2015-04-03T09:40:41.919804
+ALTER TABLE category ADD category__tmp VARCHAR(512) NOT NULL UNIQUE;
+faked!
+UPDATE category SET category__tmp=category;
+faked!
+ALTER TABLE category DROP COLUMN category;
+faked!
+ALTER TABLE category ADD category VARCHAR(512) NOT NULL UNIQUE;
+faked!
+UPDATE category SET category=category__tmp;
+faked!
+ALTER TABLE category DROP COLUMN category__tmp;
+faked!
+success!
+timestamp: 2015-04-03T09:40:42.026656
+ALTER TABLE value ADD val_lang1__tmp VARCHAR(512);
+faked!
+UPDATE value SET val_lang1__tmp=val_lang1;
+faked!
+ALTER TABLE value DROP COLUMN val_lang1;
+faked!
+ALTER TABLE value ADD val_lang1 VARCHAR(512);
+faked!
+UPDATE value SET val_lang1=val_lang1__tmp;
+faked!
+ALTER TABLE value DROP COLUMN val_lang1__tmp;
+faked!
+timestamp: 2015-04-03T09:40:42.117965
+ALTER TABLE value ADD val_lang3__tmp VARCHAR(512);
+faked!
+UPDATE value SET val_lang3__tmp=val_lang3;
+faked!
+ALTER TABLE value DROP COLUMN val_lang3;
+faked!
+ALTER TABLE value ADD val_lang3 VARCHAR(512);
+faked!
+UPDATE value SET val_lang3=val_lang3__tmp;
+faked!
+ALTER TABLE value DROP COLUMN val_lang3__tmp;
+faked!
+timestamp: 2015-04-03T09:40:42.210074
+ALTER TABLE value ADD val_lang2__tmp VARCHAR(512);
+faked!
+UPDATE value SET val_lang2__tmp=val_lang2;
+faked!
+ALTER TABLE value DROP COLUMN val_lang2;
+faked!
+ALTER TABLE value ADD val_lang2 VARCHAR(512);
+faked!
+UPDATE value SET val_lang2=val_lang2__tmp;
+faked!
+ALTER TABLE value DROP COLUMN val_lang2__tmp;
+faked!
+success!
+timestamp: 2015-04-03T09:40:42.325364
+ALTER TABLE guest ADD name__tmp VARCHAR(512) NOT NULL;
+faked!
+UPDATE guest SET name__tmp=name;
+faked!
+ALTER TABLE guest DROP COLUMN name;
+faked!
+ALTER TABLE guest ADD name VARCHAR(512) NOT NULL;
+faked!
+UPDATE guest SET name=name__tmp;
+faked!
+ALTER TABLE guest DROP COLUMN name__tmp;
+faked!
+timestamp: 2015-04-03T09:40:42.413761
+ALTER TABLE guest ADD age VARCHAR(512);
+faked!
+success!
+timestamp: 2015-04-03T09:40:42.545814
+ALTER TABLE contact ADD created_by__tmp VARCHAR(512);
+faked!
+UPDATE contact SET created_by__tmp=created_by;
+faked!
+ALTER TABLE contact DROP COLUMN created_by;
+faked!
+ALTER TABLE contact ADD created_by VARCHAR(512);
+faked!
+UPDATE contact SET created_by=created_by__tmp;
+faked!
+ALTER TABLE contact DROP COLUMN created_by__tmp;
+faked!
+timestamp: 2015-04-03T09:40:42.638340
+ALTER TABLE contact ADD simple_contact CHAR(1);
+faked!
+success!
+timestamp: 2015-04-03T09:40:43.025574
+ALTER TABLE signal_user ADD title__tmp VARCHAR(512) NOT NULL;
+faked!
+UPDATE signal_user SET title__tmp=title;
+faked!
+ALTER TABLE signal_user DROP COLUMN title;
+faked!
+ALTER TABLE signal_user ADD title VARCHAR(512) NOT NULL;
+faked!
+UPDATE signal_user SET title=title__tmp;
+faked!
+ALTER TABLE signal_user DROP COLUMN title__tmp;
+faked!
+success!

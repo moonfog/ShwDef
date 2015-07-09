@@ -1,0 +1,19 @@
+# coding: utf8
+# try something like
+def index(): return dict(message="hello from condition.py")
+
+def new():
+
+    form = SQLFORM(db.condition_guest)
+    if form.accepts(request,session):
+        response.flash = T('form accepted')
+    elif form.errors:
+        response.flash = T('form has errors')
+    else:
+        response.flash = T('please fill the form')
+    return dict(form=form)
+
+def overview(): 
+
+    form = SQLFORM.smartgrid(db.condition)
+    return dict(form=form)

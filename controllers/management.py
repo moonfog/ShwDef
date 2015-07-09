@@ -1,0 +1,134 @@
+@auth.requires_membership('Managers')
+def user():  
+
+    if session.show_flash_activated==1:
+        response.flash = T('User has been activated !') 
+        
+    if session.show_flash_deactivated==1:
+        response.flash = T('User has been deactivated !') 
+        
+    if session.user_updated==1:
+        response.flash = T('User has been updated !') 
+
+    session.show_flash_activated=0  
+    session.show_flash_deactivated=0
+    session.user_updated=0
+    
+    fields=[db.user.first_name,db.user.last_name,db.user.email,db.user.reset_password_key]
+    grid = SQLFORM.grid(db.user,fields=fields,deletable=False,editable=False,details=False,paginate=10,create=True,csv=False,links=
+          [lambda row:A(T('Edit'),_href=URL("edit_user",args=[row.id])),
+           lambda row:A(T('DeActivate'),_href=URL("deactivate",args=[row.id])),
+           lambda row:A(T('Activate'),_href=URL("activate",args=[row.id]))])  
+       
+    return dict(grid=grid)
+
+@auth.requires_membership('Managers')
+def group_membership():
+    fields=[db.group_membership.user_id,db.group_membership.group_id]
+    grid = SQLFORM.grid(db.group_membership,fields=fields,deletable=True,editable=False,details=False,paginate=10,create=True,csv=False,links=
+           [lambda row:A(T('Edit'),_href=URL("edit_group_membership",args=[row.id]))])
+           
+       
+    return dict(grid=grid)
+     
+@auth.requires_membership('Administrators')
+def value():
+
+    if session.value_updated==1:
+        response.flash = T('Value has been updated !')
+        
+    session.value_updated=0
+
+    fields=[db.value.cat,db.value.val_lang1,db.value.val_lang2,db.value.val_lang3,db.value.deleted]
+    grid = SQLFORM.grid(db.value,fields=fields,deletable=False,editable=False,details=False,paginate=10,create=True,csv=False,orderby=[db.value.cat],links=
+               [lambda row:A(T('Edit'),_href=URL("edit_value",args=[row.id]))])
+    return dict(grid=grid)
+    
+
+@auth.requires(auth.has_membership(role='Managers'))     
+def deactivate():
+   
+        if len(request.args)!= 0:
+            session.management_userID = request.args[0]
+            session.show_flash_deactivated=1
+            
+        row = db(db.user.id==session.management_userID).select().first()
+        row.update_record(registration_key='deactivated')
+        
+        redirect(URL(r=request,f='user'))
+            
+
+        
+@auth.requires(auth.has_membership(role='Managers'))     
+def activate():
+   
+        if len(request.args)!= 0:
+            session.management_userID = request.args[0]
+            session.show_flash_activated=1
+            
+        row = db(db.user.id==session.management_userID).select().first()
+        row.update_record(registration_key='')   
+
+        redirect(URL(r=request,f='user'))
+        
+@auth.requires(auth.has_membership(role='Managers'))        
+def edit_user():
+
+        if len(request.args)!= 0:
+            session.management_userID = request.args[0]
+            
+        row = db(db.user.id==session.management_userID).select().first() 
+
+        form = SQLFORM(db.user,record=row,showid = False,submit_button = T('Update'))
+        
+        if form.process().accepted:   
+            session.user_updated=1
+            redirect(URL(r=request,f='user')) 
+            
+        elif form.errors:
+            response.flash = T('form has errors')
+        else:
+            response.flash = T('Please update user')
+        
+        form[0][-1][1].append(TAG.INPUT(_value='Cancel',_type="button",_onclick="window.location='%s';"%URL(r=request,c='management',f='user')))
+        
+        return dict(form=form)
+        
+        
+@auth.requires(auth.has_membership(role='Managers'))
+def edit_group_membership():
+
+        if len(request.args)!= 0:
+            session.management_group_membershipID = request.args[0]
+            
+        row = db(db.group_membership.id==session.management_group_membershipID).select().first() 
+
+        form = SQLFORM(db.group_membership,record=row,showid = False,submit_button = 'Update')
+        
+        form[0][-1][1].append(TAG.INPUT(_value=T('Cancel'),_type="button",_onclick="window.location='%s';"%URL(r=request,c='management',f='group_membership')))
+        
+        return dict(form=form)
+        
+        
+@auth.requires(auth.has_membership(role='Administrators'))      
+def edit_value():
+
+        if len(request.args)!= 0:
+            session.management_valueID = request.args[0]
+            
+        row = db(db.value.id==session.management_valueID).select().first()
+
+        form = SQLFORM(db.value,record=row,showid = False,submit_button = T('Update'))
+        
+        if form.process().accepted:   
+            session.value_updated=1
+            redirect(URL(r=request,f='value')) 
+            
+        elif form.errors:
+            response.flash = T('form has errors')
+        else:
+            response.flash = T('Please update Value')
+        
+        form[0][-1][1].append(TAG.INPUT(_value=T('Cancel'),_type="button",_onclick="window.location='%s';"%URL(r=request,c='management',f='value')))
+        
+        return dict(form=form)

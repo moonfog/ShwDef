@@ -1,0 +1,146 @@
+(dp1
+S'financial'
+p2
+(dp3
+S'type'
+p4
+S'reference value'
+p5
+sS'sortable'
+p6
+I4
+sS'sql'
+p7
+S'INT, INDEX financial__idx (financial), FOREIGN KEY (financial) REFERENCES value(id) ON DELETE CASCADE'
+p8
+ssS'guest'
+p9
+(dp10
+g4
+S'reference guest'
+p11
+sg6
+I2
+sg7
+S'INT, INDEX guest__idx (guest), FOREIGN KEY (guest) REFERENCES guest(id) ON DELETE CASCADE'
+p12
+ssS'family'
+p13
+(dp14
+g4
+S'reference value'
+p15
+sg6
+I5
+sg7
+S'INT, INDEX family__idx (family), FOREIGN KEY (family) REFERENCES value(id) ON DELETE CASCADE'
+p16
+ssS'justice'
+p17
+(dp18
+g4
+S'reference value'
+p19
+sg6
+I11
+sg7
+S'INT, INDEX justice__idx (justice), FOREIGN KEY (justice) REFERENCES value(id) ON DELETE CASCADE'
+p20
+ssS'residence'
+p21
+(dp22
+g4
+S'reference value'
+p23
+sg6
+I9
+sg7
+S'INT, INDEX residence__idx (residence), FOREIGN KEY (residence) REFERENCES value(id) ON DELETE CASCADE'
+p24
+ssS'housing'
+p25
+(dp26
+g4
+S'reference value'
+p27
+sg6
+I10
+sg7
+S'INT, INDEX housing__idx (housing), FOREIGN KEY (housing) REFERENCES value(id) ON DELETE CASCADE'
+p28
+ssS'gainings'
+p29
+(dp30
+g4
+S'reference value'
+p31
+sg6
+I6
+sg7
+S'INT, INDEX gainings__idx (gainings), FOREIGN KEY (gainings) REFERENCES value(id) ON DELETE CASCADE'
+p32
+ssS'mental'
+p33
+(dp34
+g4
+S'reference value'
+p35
+sg6
+I8
+sg7
+S'INT, INDEX mental__idx (mental), FOREIGN KEY (mental) REFERENCES value(id) ON DELETE CASCADE'
+p36
+ssS'drug'
+p37
+(dp38
+g4
+S'reference value'
+p39
+sg6
+I12
+sg7
+S'INT, INDEX drug__idx (drug), FOREIGN KEY (drug) REFERENCES value(id) ON DELETE CASCADE'
+p40
+ssS'date'
+p41
+(dp42
+g4
+g41
+sg6
+I3
+sg7
+S'DATE NOT NULL'
+p43
+ssS'current_study'
+p44
+(dp45
+g4
+S'reference value'
+p46
+sg6
+I13
+sg7
+S'INT, INDEX current_study__idx (current_study), FOREIGN KEY (current_study) REFERENCES value(id) ON DELETE CASCADE'
+p47
+ssS'id'
+p48
+(dp49
+g4
+g48
+sg6
+I1
+sg7
+S'INT AUTO_INCREMENT NOT NULL'
+p50
+ssS'physical'
+p51
+(dp52
+g4
+S'reference value'
+p53
+sg6
+I7
+sg7
+S'INT, INDEX physical__idx (physical), FOREIGN KEY (physical) REFERENCES value(id) ON DELETE CASCADE'
+p54
+ss.

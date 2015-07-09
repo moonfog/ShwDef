@@ -1,0 +1,12 @@
+{{extend 'layout.html'}}
+<fieldset>
+<u><h4>{{=T('Condition')}}:</h4></u>
+</fieldset>
+<fieldset>
+{{=form1}}
+</fieldset>
+<fieldset>
+{{=form2}}
+<br/>
+{{=INPUT(_value=T("Back"),_onclick="javascript:void(history.go(-1))",_type="button")}}
+</fieldset>

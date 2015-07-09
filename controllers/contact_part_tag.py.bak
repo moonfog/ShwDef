@@ -1,0 +1,111 @@
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))    
+def tag():
+    
+    if len(contact_part_tag_errors)==0: 
+   
+        if(session.contact_part_inserted==1):
+            response.flash=T('Contact part inserted, please add some tags !')
+            session.contact_part_inserted=0
+		if(session.no_tags_added==1):
+		    response.flash=T('Please add at least 1 Tag !')
+			session.no_tags_added=0
+        else:
+            response.flash=T('Manage your contact part tags !')
+
+       
+        if len(request.args)!=0:
+            session.contactpartID = request.args[0]
+        
+            
+        contactpartID=session.contactpartID   
+        contact_part_row=db(db.contact_part.id==contactpartID).select().first()        
+    
+        contactID=session.contactID
+        contact_row=db(db.contact.id==contactID).select().first()
+        
+        guest_row=db.guest[contact_row.guest]
+        
+        guest_name=guest_row.name
+        contact_date=contact_row.date   
+        contact_part_subjectID=contact_part_row.subject
+        contact_part_subject_row=db(db.value.id==contact_part_subjectID).select().first()
+        
+        if(session._language==lang1):            
+            contact_part_subject=contact_part_subject_row.val_lang1
+        if(session._language==lang2):
+            contact_part_subject=contact_part_subject_row.val_lang2
+        if(session._language==lang3):
+            contact_part_subject=contact_part_subject_row.val_lang3
+            
+        form1=FORM(TABLE(TR(TD(LABEL('Contact Date :'),_class="w2p_f1"),TD(INPUT(_name='contact_date',_readonly='readonly'))),
+                    TR(TD(LABEL('Guest :'),_class="w2p_f1"),TD(INPUT(_name='guest_name',_readonly='readonly',_type='text'))),
+                    TR(TD(LABEL('Subject contact part :'),_class="w2p_f1"),TD(INPUT(_name='contact_part_subject',_readonly='readonly')))),_id='form1') 
+                    
+        form1.vars.contact_date=contact_date
+        form1.vars.guest_name=guest_name
+        form1.vars.contact_part_subject=contact_part_subject
+            
+        form1.validate()
+         
+        fields = ['tag']
+        form2 = SQLFORM(db.contact_part_tag,fields=fields,hidden=dict(contact_part=session.contactpartID),labels={'tag':''},submit_button = 'Add Tag')
+        form2.vars.contact_part = session.contactpartID
+        
+        
+        if form2.process().accepted:
+            response.flash=''
+            
+        if form2.errors:
+            response.flash = 'Form has errors !'     
+            
+        delete_same_tag()  
+        
+        fields = [db.contact_part_tag.tag]
+        form3 = SQLFORM.grid(db.contact_part_tag.contact_part==contactpartID,fields = fields, ui = 'jquery-ui',deletable=False,details=False,create=False,editable=False,csv=False,searchable=False,paginate=10,
+        links=[lambda row:A('Delete',_href=URL("delete_tag",args=[row.id]))])
+        
+        if(tags_already_added()):
+            button=TAG.INPUT(_value='Next',_type="button",_onclick="window.location='%s';"%URL(r=request,c='contact_part',f='overview')) 
+        else:
+            button=None
+           
+        return dict(form1=form1,form2=form2,form3=form3,button=button)
+        
+          
+        return dict(form1=form1,form2=form2,form3=form3,button=button)
+    
+    else:
+        session.type_error='signal_user_tag'
+        redirect(URL(r=request,c='error',f='category_value'))
+
+        
+@auth.requires(auth.has_membership(role='Straathoekwerkers')) 
+def delete_tag():
+    if len(request.args)!=0:
+        contact_part_tagID = request.args[0]
+    db(db.contact_part_tag.id == contact_part_tagID).delete()
+    redirect(URL(r=request,f='tag'))
+    
+    
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))   
+def delete_same_tag():
+    contactpartID=session.contactpartID   
+    contact_part_tag_rows=db(db.contact_part_tag.contact_part==contactpartID).select()      
+    
+    for row1 in contact_part_tag_rows:     
+        teller=0
+        for row2 in contact_part_tag_rows:          
+            if row1.tag==row2.tag:
+                teller=teller+1
+                if teller>1:
+                    db(db.contact_part_tag.id == row2.id).delete()
+                    break
+                    
+def tags_already_added():
+    contact_part_tag_records=db(db.contact_part_tag.contact_part==session.contactpartID).select()
+    if(len(contact_part_tag_records)==0):
+		session.no_tags_added=1
+        return False
+    else:
+        return True

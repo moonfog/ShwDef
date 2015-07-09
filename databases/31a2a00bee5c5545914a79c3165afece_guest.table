@@ -1,0 +1,132 @@
+(dp1
+S'origin'
+p2
+(dp3
+S'sortable'
+p4
+L5L
+sS'type'
+p5
+S'reference country'
+p6
+sS'sql'
+p7
+S'INT, INDEX origin__idx (origin), FOREIGN KEY (origin) REFERENCES country(id) ON DELETE CASCADE'
+p8
+ssS'name'
+p9
+(dp10
+S'length'
+p11
+I512
+sS'unique'
+p12
+I00
+sS'sortable'
+p13
+I2
+sS'sql'
+p14
+S'VARCHAR(512) NOT NULL'
+p15
+sS'notnull'
+p16
+I01
+sS'type'
+p17
+S'string'
+p18
+ssS'age'
+p19
+(dp20
+g11
+I512
+sg12
+I00
+sg13
+I10
+sg14
+S'VARCHAR(512)'
+p21
+sg16
+I00
+sg17
+g18
+ssS'registration_date'
+p22
+(dp23
+g4
+L8L
+sg5
+S'date'
+p24
+sg7
+S'DATE NOT NULL'
+p25
+ssS'sex'
+p26
+(dp27
+g4
+L3L
+sg5
+S'reference value'
+p28
+sg7
+S'INT, INDEX sex__idx (sex), FOREIGN KEY (sex) REFERENCES value(id) ON DELETE CASCADE'
+p29
+ssS'user'
+p30
+(dp31
+g4
+L9L
+sg5
+S'reference user'
+p32
+sg7
+S'INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE'
+p33
+ssS'nationality'
+p34
+(dp35
+g4
+L6L
+sg5
+S'reference country'
+p36
+sg7
+S'INT, INDEX nationality__idx (nationality), FOREIGN KEY (nationality) REFERENCES country(id) ON DELETE CASCADE'
+p37
+ssS'education'
+p38
+(dp39
+g4
+L7L
+sg5
+S'reference value'
+p40
+sg7
+S'INT, INDEX education__idx (education), FOREIGN KEY (education) REFERENCES value(id) ON DELETE CASCADE'
+p41
+ssS'id'
+p42
+(dp43
+g4
+L1L
+sg5
+S'id'
+p44
+sg7
+S'INT AUTO_INCREMENT NOT NULL'
+p45
+ssS'birth_year'
+p46
+(dp47
+g4
+L4L
+sg5
+S'integer'
+p48
+sg7
+S'INT NOT NULL'
+p49
+ss.

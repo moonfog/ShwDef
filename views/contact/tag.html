@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+<fieldset><u><h4>{{=T('Management Tags from Contact Part :')}}</h4></u>
+<br/>
+<strong>{{=T('Contact date :')}} {{=contact_date}}</strong>
+<br/>
+<strong>{{=T('Guest :')}} {{=guest}}</strong>
+<br/>
+<strong>{{=T('Contact Part subject:')}} {{=contact_part_subject}}</strong>
+</fieldset>
+
+<fieldset>
+<u><strong>{{=T('Add tags :')}}</strong></u>
+<br/><br/>
+{{=form1}}
+</fieldset>
+<fieldset>
+<u><strong>{{=T('Overview tags :')}}</strong></u>
+<br/><br/>
+{{=form2}}
+</fieldset>
+

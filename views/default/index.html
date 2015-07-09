@@ -1,0 +1,7 @@
+{{extend 'layout.html'}}
+<fieldset><h3>{{=T('Login')}} : </h3></fieldset>
+<fieldset>
+{{=form}}
+  <br/>
+  <a href="{{=URL(args='request_reset_password')}}">{{=T('Lost Password')}}</a>
+</fieldset>

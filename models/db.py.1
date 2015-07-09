@@ -1,0 +1,412 @@
+import datetime
+
+##T.set_current_languages('du')
+session._language='du'
+if request.vars._language: session._language=request.vars._language
+if (session._language and session._language!=None) : T.force(session._language)
+
+db = DAL('sqlite://storage.sqlite')
+
+response.generic_patterns = ['*'] if request.is_local else []
+
+from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
+auth = Auth(db, hmac_key=Auth.get_or_create_key())
+crud, service, plugins = Crud(db), Service(), PluginManager()
+
+
+## create all tables needed by auth if not custom tables
+auth.settings.table_user_name = 'user'
+auth.settings.table_group_name = 'group_role'
+auth.settings.table_membership_name = 'group_membership'
+auth.settings.table_permission_name = 'permission'
+auth.settings.actions_disabled.append('register')
+auth.define_tables()
+
+## configure auth policy
+auth.settings.registration_requires_verification = False
+auth.settings.registration_requires_approval = False
+auth.settings.reset_password_requires_verification = True
+
+## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
+## register with janrain.com, write your domain:api_key in private/janrain.key
+from gluon.contrib.login_methods.rpx_account import use_janrain
+use_janrain(auth,filename='private/janrain.key')
+
+lang1='du'
+lang2='fr'
+lang3=None
+
+db.define_table('country',
+    Field('continent',notnull=True,label=T('Continent')),
+    Field('country_lang1',label=T('Dutch')),
+    Field('country_lang2',label=T('French')),
+    Field('country_lang3',label=T('Optional')))
+    
+if(session._language==lang1) :
+    db.country._format='%(country_lang1)s'
+if(session._language==lang2) :
+    db.country._format='%(country_lang2)s'
+if(session._language==lang3) :
+    db.country._format='%(country_lang3)s'
+
+db.define_table('category',
+    Field('category',unique=True,notnull=True,label=T('Category')),
+    format = '%(category)s ')
+
+db.define_table('value',
+    Field('cat',db.category,notnull=True,label=T('Category')),
+    Field('val_lang1',label=T('Dutch')),
+    Field('val_lang2',label=T('French')),
+    Field('val_lang3',label=T('Optional')),
+    Field('deleted','boolean',default=False,label=T('Deleted')))
+
+db.value.cat.requires=IS_IN_DB(db,'category.id','%(category)s')
+
+
+
+if(lang1!=None):
+    db.value.val_lang1.requires = [IS_NOT_EMPTY()]
+    
+if(lang2!=None):
+    db.value.val_lang2.requires = [IS_NOT_EMPTY()]
+    
+if(lang3!=None):
+    db.value.val_lang3.requires = [IS_NOT_EMPTY()]
+    
+
+if(session._language==lang1) :
+    db.value._format='%(val_lang1)s'
+    
+if(session._language==lang2) :
+    db.value._format='%(val_lang2)s'   
+   
+if(session._language==lang3) :
+    db.value._format='%(val_lang3)s'  
+    
+    
+def getCategory(value):
+    row = db(db.category.category==value).select().first()
+    return row
+
+def valueNotEmpty(value):
+    if(getCategory(value)==None):
+        return False
+    else :
+        row = db(db.value.cat == getCategory(value).id).select().first()
+        if row!=None:
+            return True
+        else:
+            return False
+            
+years=[]
+
+def makeYears():
+    i=0
+    year=datetime.date.today().year
+    while i<100:
+        i=i+1
+        years.append(year)
+        year=year-1
+       
+        
+makeYears()
+    
+    
+db.define_table('guest',
+    Field('name',notnull=True,label=T('Name')),
+    Field('sex',db.value,notnull=True,label=T('Sex')),
+    Field('birth_year',label=T('Birth year')),
+    Field('origin',db.country,notnull=True,label=T('Origin')),
+    Field('nationality',db.country,notnull=True,label=T('Nationality')),
+    Field('education',db.value,notnull=True,label=T('Education')),
+    Field('registration_date','date',default=request.now,label=T('Registered on')),
+    Field('user',db.user,notnull=True,label=T('Registered by')),      
+    format = '%(name)s')
+    
+db.guest.birth_year.requires=IS_IN_SET(years,zero=T('choose one'),
+         error_message='must be a or b or c')
+         
+         
+guests_User = db(db.guest.user==ss)
+         
+db.guest.name.requires=IS_NOT_IN_DB(db, 'guest.name')
+    
+def createDropDownListsGuests():
+
+    if(getCategory('guest.sex')!=None and valueNotEmpty('guest.sex')):
+        query = ((db.value.cat == getCategory("guest.sex").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.guest.sex.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.guest.sex.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.guest.sex.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+        
+    if(getCategory('guest.education')!=None and valueNotEmpty('guest.education')):
+        query = ((db.value.cat == getCategory("guest.education").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.guest.education.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.guest.education.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.guest.education.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')        
+    
+    if(session._language==lang1) :
+        db.guest.origin.requires=IS_IN_DB(db,'country.id','%(country_lang1)s')
+        db.guest.nationality.requires=IS_IN_DB(db,'country.id','%(country_lang1)s')        
+    if(session._language==lang2) :
+        db.guest.origin.requires=IS_IN_DB(db,'country.id','%(country_lang2)s')
+        db.guest.nationality.requires=IS_IN_DB(db,'country.id','%(country_lang2)s')  
+    if(session._language==lang3) :
+        db.guest.origin.requires=IS_IN_DB(db,'country.id','%(country_lang3)s')
+        db.guest.nationality.requires=IS_IN_DB(db,'country.id','%(country_lang3)s')  
+    
+         
+createDropDownListsGuests()    
+   
+    
+db.define_table('condition_guest',
+    Field('guest',db.value,notnull=True,label=T('Guest')),
+    Field('date','date',notnull=True,label=T('Date')),
+    Field('financial',db.value,notnull=True,label=T('Financial situation')),
+    Field('family',db.value,notnull=True,label=T('Family situation')),
+    Field('gainings',db.value,notnull=True,label=T('Gainings')),
+    Field('physical',db.value,notnull=True,label=T('Physical')),
+    Field('mental',db.value,notnull=True,label=T('Mental')),
+    Field('residence',db.value,notnull=True,label=T('Residence')),
+    Field('housing',db.value,notnull=True,label=T('Housing')),
+    Field('drug',db.value,notnull=True,label=T('Drugs/Alcohol')),
+    Field('current_study',db.value,notnull=True,label=T('Current study')),
+    Field('justice',db.value,notnull=True,label=T('Justice')),
+    format = '%(date)s ')
+
+class GuestAge():
+    def age(self):
+        year = datetime.datetime.now().year
+        if self.guest.birth_date is not None :
+         birthyear = self.guest.birth_date.year
+         age = year - birthyear
+        else : age = 0
+        return (age)
+        
+db.guest.virtualfields.append(GuestAge())             
+            
+            
+def createDropDownListsCondition():
+
+    if(getCategory('condition_guest.financial')!=None and valueNotEmpty('condition_guest.financial')):
+        query = ((db.value.cat == getCategory("condition_guest.financial").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.financial.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.financial.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.financial.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+        
+    if(getCategory('condition_guest.family')!=None and valueNotEmpty('condition_guest.family')):
+        query = ((db.value.cat == getCategory("condition_guest.family").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.family.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.family.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.family.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+            
+    if(getCategory('condition_guest.gainings')!=None and (valueNotEmpty('condition_guest.gainings'))) :
+        query = ((db.value.cat == getCategory("condition_guest.gainings").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.gainings.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.gainings.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.gainings.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+        
+    if(getCategory('condition_guest.physical')!=None and valueNotEmpty('condition_guest.physical')):
+        query = ((db.value.cat == getCategory("condition_guest.physical").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.physical.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.physical.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.physical.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')    
+            
+    if(getCategory('condition_guest.mental')!=None and valueNotEmpty('condition_guest.mental')):
+        query = ((db.value.cat == getCategory("condition_guest.mental").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.mental.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.mental.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.mental.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+            
+    if(getCategory('condition_guest.residence')!=None and valueNotEmpty('condition_guest.residence')):
+        query = ((db.value.cat == getCategory("condition_guest.residence").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.residence.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.residence.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.residence.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+        
+    if(getCategory('condition_guest.housing')!=None and valueNotEmpty('condition_guest.housing')):
+        query = ((db.value.cat == getCategory("condition_guest.housing").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.housing.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.housing.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.housing.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+                    
+    if(getCategory('condition_guest.drug')!=None and valueNotEmpty('condition_guest.drug')):
+        query = ((db.value.cat == getCategory("condition_guest.drug").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.drug.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.drug.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.drug.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')  
+        
+    if(getCategory('condition_guest.current_study')!=None and valueNotEmpty('condition_guest.current_study')):
+        query = ((db.value.cat == getCategory("condition_guest.current_study").id) & (db.value.deleted==False))
+        if(session._language==lang1) : db.condition_guest.current_study.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+        if(session._language==lang2) : db.condition_guest.current_study.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+        if(session._language==lang3) : db.condition_guest.current_study.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')       
+            
+            
+createDropDownListsCondition()
+
+
+  
+
+
+    
+    
+db.define_table('contact',
+    Field('guest',db.guest,notnull=True,label=T('Guest')),
+    Field('neighbourhood',db.value,notnull=True,label=T('Neighbourhood')),
+    Field('date','date',default=request.now,notnull=True,label=T('Date')),
+    Field('created_by', default=auth.user_id,label=T('Created by'),writable=False,readable=False),
+    format = '%(date)s : %(guest)s')
+    
+def createDropDownListContacts():
+
+    if(getCategory('contact.neighbourhood')!=None and valueNotEmpty('contact.neighbourhood')):
+            query = ((db.value.cat == getCategory("contact.neighbourhood").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.contact.neighbourhood.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.contact.neighbourhood.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.contact.neighbourhood.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+
+createDropDownListContacts()
+
+db.define_table('contact_part',
+    Field('contact',db.contact,notnull=True,label=T('Contact')),
+    Field('subject',db.value,notnull=True,label=T('Subject')),
+    Field('story','text',notnull=True,label=T('Story')),    
+    Field('indirect','boolean',default=False,label=T('Indirect contact')),
+    format = '%(contact)s')
+    
+def createDropDownListContact_Parts():
+
+        if(getCategory('subject')!=None and valueNotEmpty('subject')):
+            query = ((db.value.cat == getCategory("subject").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.contact_part.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.contact_part.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.contact_part.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+
+createDropDownListContact_Parts()
+
+
+db.define_table('contact_part_tag',
+    Field('contact_part',db.contact_part,notnull=True), 
+    Field('tag',db.value,notnull=True,label=T('Tag')),
+    format = '%(tag)s')
+    
+def createDropDownListContact_Part_Tags():
+
+        if(getCategory('tag')!=None and valueNotEmpty('tag')):
+            query = ((db.value.cat == getCategory("tag").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.contact_part_tag.tag.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.contact_part_tag.tag.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.contact_part_tag.tag.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+
+createDropDownListContact_Part_Tags()
+
+
+
+db.define_table('reaction_user',
+    Field('contact_part',db.contact_part,notnull=True,unique=True),
+    Field('type',db.value,notnull=True,label=T('Type')),
+    Field('subject',db.value,label=T('Subject')),
+    Field('location',db.value,label=T('Location')),
+    Field('description','text',label=T('description')))  
+
+
+def createDropDownListReactions():
+
+        if(getCategory('reaction_user.type')!=None and valueNotEmpty('reaction_user.type')):
+            query = ((db.value.cat == getCategory("reaction_user.type").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.reaction_user.type.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.reaction_user.type.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.reaction_user.type.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+            
+        if(getCategory('reaction_user.subject')!=None and valueNotEmpty('reaction_user.subject')):
+            query = ((db.value.cat == getCategory("reaction_user.subject").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.reaction_user.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.reaction_user.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.reaction_user.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+            
+        if(getCategory('reaction_user.location')!=None and valueNotEmpty('reaction_user.location')):
+            query = ((db.value.cat == getCategory("reaction_user.location").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.reaction_user.location.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.reaction_user.location.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.reaction_user.location.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+
+createDropDownListReactions()
+
+    
+
+db.define_table('signal_user',
+    Field('user',db.user,notnull=True,label=T('User')),
+    Field('title',notnull=True,label=T('Title')),
+    Field('subject',db.value,notnull=True,label=T('Subject')),
+    Field('description','text',notnull=True,label=T('Description')),
+    Field('date','date',default=request.now,notnull=True,label=T('Date')),
+    format = '%(date)s : %(user)s')
+    
+def createDropDownListSignal_Users():
+
+        if(getCategory('subject')!=None and valueNotEmpty('subject')):
+            query = ((db.value.cat == getCategory("subject").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.signal_user.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.signal_user.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.signal_user.subject.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+
+createDropDownListSignal_Users()
+    
+    
+db.define_table('signal_user_tag',
+    Field('signal_user',db.signal_user,notnull=True), 
+    Field('tag',db.value,notnull=True,label=T('Tag')),
+    format = '%(tag)s')
+    
+def createDropDownListSignal_User_Tags():
+
+        if(getCategory('tag')!=None and valueNotEmpty('tag')):
+            query = ((db.value.cat == getCategory("tag").id) & (db.value.deleted==False))
+            if(session._language==lang1) : db.signal_user_tag.tag.requires=IS_IN_DB(db(query),'value.id','%(val_lang1)s')
+            if(session._language==lang2) : db.signal_user_tag.tag.requires=IS_IN_DB(db(query),'value.id','%(val_lang2)s')
+            if(session._language==lang3) : db.signal_user_tag.tag.requires=IS_IN_DB(db(query),'value.id','%(val_lang3)s')
+
+createDropDownListSignal_User_Tags()
+
+
+def build_query(field, op, value):
+    if op == 'equals':
+        return field == value
+    elif op == 'not equal':
+        return field != value
+    elif op == 'greater than':
+        return field > value
+    elif op == 'less than':
+        return field < value
+    elif op == 'starts with':
+        return field.like(value+'%')
+    elif op == 'ends with':
+        return field.like('%'+value)
+    elif op == 'contains':
+        return field.like('%'+value+'%')
+
+def dynamic_search(table):
+    tbl = TABLE()
+    ops = ['equals','not equal','greater than','less than',
+           'starts with','ends with','contains']
+    query = table.id > 0    
+    
+    chkval = request.vars.get('chk',None)
+    txtval = request.vars.get('txt',None)
+    opval = request.vars.get('op',None)
+    
+    row = TR(TD(INPUT(_type="checkbox",_name="chk",
+                          value=chkval=='on')),
+                 TD('ID'),TD(SELECT(ops,_name="op",
+                                     value=opval)),
+                 TD(INPUT(_type="text",_name="txt",
+                          _value=txtval)))
+    tbl.append(row)
+    if chkval:
+            if txtval:
+                query = 'signal_user.id==txtval'
+                       
+    form = FORM(tbl,INPUT(_type="submit"))
+    results = db(db.signal_user.id==txtval).select()
+    return form, results

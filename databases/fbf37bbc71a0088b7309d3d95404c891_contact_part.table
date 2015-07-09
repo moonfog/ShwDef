@@ -1,0 +1,59 @@
+(dp1
+S'story'
+p2
+(dp3
+S'type'
+p4
+S'text'
+p5
+sS'sortable'
+p6
+I4
+sS'sql'
+p7
+S'LONGTEXT NOT NULL'
+p8
+ssS'contact'
+p9
+(dp10
+g4
+S'reference contact'
+p11
+sg6
+I2
+sg7
+S'INT, INDEX contact__idx (contact), FOREIGN KEY (contact) REFERENCES contact(id) ON DELETE CASCADE'
+p12
+ssS'id'
+p13
+(dp14
+g4
+g13
+sg6
+I1
+sg7
+S'INT AUTO_INCREMENT NOT NULL'
+p15
+ssS'indirect'
+p16
+(dp17
+g4
+S'boolean'
+p18
+sg6
+I5
+sg7
+S'CHAR(1)'
+p19
+ssS'subject'
+p20
+(dp21
+g4
+S'reference value'
+p22
+sg6
+I3
+sg7
+S'INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE'
+p23
+ss.

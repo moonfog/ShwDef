@@ -1,0 +1,3 @@
+{{extend 'layout.html'}}
+<fieldset><h2>Aantal Gasten totaal : {{=count_guests}}</h2></fieldset>
+<fieldset><h2>Aantal contacten totaal : {{=count_contacts}}</h2></fieldset>

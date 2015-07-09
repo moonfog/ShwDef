@@ -1,0 +1,4 @@
+{{extend 'layout.html'}}
+<ul>
+{{for item in messages:}}<li><h1>{{=item}}<h1></li>{{pass}}
+</ul>

@@ -1,0 +1,337 @@
+{{extend 'layout.html'}}
+<fieldset><u><h4>{{=T('Contact')}} :</h4></u>
+<br/>
+<strong>{{=T('Date')}} : {{=contact_date}}</strong>
+<br/>
+<strong>{{=T('Guest')}} : {{=guest}}</strong>
+<br/>
+<strong>{{=T('Neighbourhood')}} : {{=neighbourhood}}</strong>
+</fieldset>
+<br/>
+<fieldset>
+<u><h4>{{=T('Update Contact part')}} :</h4></u>
+</fieldset>
+<fieldset>
+{{=form_cp}}
+{{=INPUT(_value=T("Back"),_onclick="javascript:void(history.go(-1))",_type="button")}}
+</fieldset>
+<br/>
+<fieldset>
+<u><h4>{{=T('Update Reaction :')}}</h4></u>
+</fieldset>
+<fieldset>
+<br/>
+{{=form_ru}}
+{{=INPUT(_value=T("Back"),_onclick="javascript:void(history.go(-1))",_type="button")}}
+</fieldset>
+
+<script>
+
+	var selected;
+    
+    function changeSelectOptions() {          
+      setSelectOptions(); }       
+    
+    function setSelectLocations(language)
+    {
+        $.getJSON('/test/contact_part/locations',
+      function(data){ var locations=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+      for(var i=0; i < locations.length; i++) {
+                var d = locations[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+    
+    function setSelectTasks(language)
+    {
+        $.getJSON('/test/contact_part/tasks',
+      function(data){ var tasks=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < tasks.length; i++) {
+                var d = tasks[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+
+    function setSelectListenings(language)
+    {
+        $.getJSON('/test/contact_part/listenings',
+      function(data){ var listenings=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < listenings.length; i++) {
+                var d = listenings[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+
+    function setSelectMediations(language)
+    {
+        $.getJSON('/test/contact_part/mediations',
+      function(data){ var mediations=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < mediations.length; i++) {
+                var d = mediations[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+
+    function setSelectCrise_interventions(language)
+    {
+        $.getJSON('/test/contact_part/crise_interventions',
+      function(data){ var crise_interventions=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < crise_interventions.length; i++) {
+                var d = crise_interventions[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+    }  
+    function setSelectInformings(language)
+    {
+        $.getJSON('/test/contact_part/informings',
+      function(data){ var informings=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < informings.length; i++) {
+                var d = informings[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+
+    function setSelectDistributing_materials(language)
+    {
+        $.getJSON('/test/contact_part/distributing_materials',
+      function(data){ var distributing_materials=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < distributing_materials.length; i++) {
+                var d = distributing_materials[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+
+    function setSelectInterest_representations(language)
+    {
+        $.getJSON('/test/contact_part/interest_representations',
+      function(data){ var interest_representations=data;
+      var select = document.getElementById("reaction_user_content");      
+      select.options.length = 0; // clear out existing items
+            for(var i=0; i < interest_representations.length; i++) {
+                var d = interest_representations[i];
+				if(language=='lang1'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang1,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang1,d.id));}
+					}
+				if(language=='lang2'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang2,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang2,d.id));}
+					}
+				if(language=='lang3'){
+					if(d.id==selected)
+					{select.options.add(new Option(d.val_lang3,d.id,true,true));}
+					else
+                    {select.options.add(new Option(d.val_lang3,d.id));}
+					}
+                 }                 
+             });
+		 	
+    }  
+       
+    function  setSelectOptions()
+    {
+	$.getJSON('/test/contact_part/language',
+      function(data){ var language=data;
+      option = $("#reaction_user_type").val();
+
+      if (option==158)
+      {
+          setSelectLocations(language);
+      }
+      if (option==156)
+      {
+          setSelectTasks(language);
+      }
+	  if (option==151)
+      {
+          setSelectListenings(language);
+      }
+      if (option==153)
+      {
+          setSelectMediations(language);
+      }
+	  if (option==154)
+      {
+          setSelectCrise_interventions(language);
+      }
+      if (option==155)
+      {
+         setSelectInformings(language);
+      }
+	  if (option==157)
+      {
+          setSelectDistributing_materials(language);
+      }
+      if (option==152)
+      {
+          setSelectInterest_representations(language);
+      }
+	  });
+    }	
+	
+	function startOptions()
+	{
+	selected=$("#reaction_user_content").val();
+	setSelectOptions();
+
+	}
+
+	startOptions();
+	$("#reaction_user_type").change(changeSelectOptions); 
+	
+
+	
+
+
+	
+</script>

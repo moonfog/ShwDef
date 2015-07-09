@@ -1,0 +1,10 @@
+{{extend 'layout.html'}}
+<fieldset><u><h4>{{=T('Update contact')}}:</h4></u>
+<br/>
+<strong>{{=T('Guest')}} : {{=name}}</strong>
+</fieldset>
+<fieldset>
+{{=form}}
+<br/>
+{{=INPUT(_value=T("Back"),_onclick="javascript:void(history.go(-1))",_type="button")}}
+</fieldset>

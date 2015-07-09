@@ -1,0 +1,83 @@
+(dp1
+S'description'
+p2
+(dp3
+S'sortable'
+p4
+I5
+sS'type'
+p5
+S'text'
+p6
+sS'sql'
+p7
+S'LONGTEXT NOT NULL'
+p8
+ssS'title'
+p9
+(dp10
+S'length'
+p11
+I512
+sS'unique'
+p12
+I00
+sS'sortable'
+p13
+I3
+sS'sql'
+p14
+S'VARCHAR(512) NOT NULL'
+p15
+sS'notnull'
+p16
+I01
+sS'type'
+p17
+S'string'
+p18
+ssS'date'
+p19
+(dp20
+g4
+I6
+sg5
+S'date'
+p21
+sg7
+S'DATE NOT NULL'
+p22
+ssS'subject'
+p23
+(dp24
+g4
+I4
+sg5
+S'reference value'
+p25
+sg7
+S'INT, INDEX subject__idx (subject), FOREIGN KEY (subject) REFERENCES value(id) ON DELETE CASCADE'
+p26
+ssS'id'
+p27
+(dp28
+g4
+I1
+sg5
+S'id'
+p29
+sg7
+S'INT AUTO_INCREMENT NOT NULL'
+p30
+ssS'user'
+p31
+(dp32
+g4
+I2
+sg5
+S'reference user'
+p33
+sg7
+S'INT, INDEX user__idx (user), FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE'
+p34
+ss.

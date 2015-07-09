@@ -1,0 +1,112 @@
+import cStringIO
+import time
+from datetime import date
+
+class CSVExporter(object):
+    file_ext = "csv"
+    content_type = "text/csv"
+
+    def __init__(self, rows):
+        self.rows = rows
+
+    def export(self):
+        if self.rows:
+            s = cStringIO.StringIO()
+            self.rows.export_to_csv_file(s, represent=True)
+            return s.getvalue()
+        else:
+            return ''
+
+def search_guest():
+	year = request.vars['year_selector']
+	query = db.guest.registration_date.year() == year
+	fields = [db.guest.sex,db.guest.birth_year,db.guest.age,db.guest.nationality,db.guest.origin,db.guest.education]
+	grid = SQLFORM.grid(query,fields,sortable=True,deletable=False,editable=False,details=False,paginate=10,user_signature = False,create=False,csv=True,exportclasses=dict(csv=(CSVExporter, 'CSV'),csv_with_hidden_cols=False,xml=False,html=False,json=False,tsv_with_hidden_cols=False))
+	return dict(grid=grid , year=year)
+
+def select_year_guest():
+	years = range(2012,(long(date.today().strftime("%Y"))) + 1)
+	form = FORM(SELECT(*years,**dict(_name = "year_selector")),INPUT(_type='submit'))
+	form['_action']=URL('search_guest')
+
+
+	if form.process().accepted:
+         response.flash = 'form accepted'
+         #redirect(URL(r = request, f = 'search'))
+	return dict(form = form)
+
+def quick_overview():
+    count_guests = db(db.guest.id > 0).count()
+    count_contacts = db(db.contact.id > 0).count()
+    return dict(count_guests = count_guests , count_contacts = count_contacts)
+
+
+def overview_guests():
+
+    if len(guest_errors)==0:
+        #guests = (db.guest.id == db)
+        fields =[db.guest.id, db.guest.nationality,db.guest.origin,db.guest.sex,db.guest.age,db.guest.birth_year,db.guest.education]
+
+        grid = SQLFORM.grid(db.guest,fields=fields,deletable=False,editable=False,details=False,paginate=10,create=False,csv=True)
+
+        return dict(form=grid)
+
+    else:
+        session.type_error='guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+
+def search_contacts():
+	year = request.vars['year_selector']
+	query = (db.contact_part.contact == db.contact.id) & (db.contact.date.year() == year)
+
+	fields = [db.guest.id, db.guest.nationality,db.guest.origin,db.guest.sex,db.guest.age,db.guest.birth_year,db.guest.education]
+	grid = SQLFORM.grid(query=query,fields=fields,deletable=False,editable=False,details=False,paginate = 10,create=False,csv=True,exportclasses=dict(csv=(CSVExporter, 'CSV'),csv_with_hidden_cols=False,xml=False,html=False,json=False,tsv_with_hidden_cols=False))
+	return dict(form=grid , year=year)
+    # geëxporteerde docs blijven leeg ?????
+
+def select_year_contacts():
+	years = range(2012,(long(date.today().strftime("%Y"))) + 1)
+	form = FORM(SELECT(*years,**dict(_name = "year_selector")),INPUT(_type='submit'))
+	form['_action']=URL('search_contacts')
+
+
+	if form.process().accepted:
+         response.flash = 'form accepted'
+         #redirect(URL(r = request, f = 'search'))
+	return dict(form = form)
+
+def countsimplecontacts():
+	countsimplecontacts = db((db.contact.simple_contact=='T')).count()
+	return countsimplecontacts
+
+def overview_contact_parts():
+    contactparts = (db.contact_part.id == db.reaction_user.contact_part) & (db.contact.id == db.contact_part.contact) & (db.contact_part.id == db.contact_part_tag.contact_part)
+fields = [db.contact_part.subject,db.reaction_user.type,db.reaction_user.content,db.contact_part_tag.tag , db.contact.date]
+grid = SQLFORM.grid(contactparts,fields=fields,deletable=False,editable=False,details=False,paginate=10,create=False,ignore_rw=True,csv=True,exportclasses=dict(csv=(CSVExporter, 'CSV'),csv_with_hidden_cols=False,xml=False,html=False,json=False,tsv_with_hidden_cols=False))
+	return dict(grid = grid)
+
+def search_conditions():
+	year = request.vars['year_selector']
+	query = db.condition_guest.date.year()==year
+	#fields = []
+	grid = SQLFORM.grid(query=query,deletable=False,editable=False,details=False,paginate=10,create=False,csv=True,exportclasses=dict(csv=(CSVExporter, 'CSV'),csv_with_hidden_cols=False,xml=False,html=False,json=False,tsv_with_hidden_cols=False),orderby=[db.condition_guest.guest])
+	return dict(grid=grid , year=year)
+
+def select_year_conditions():
+	years = range(2012,(long(date.today().strftime("%Y"))) + 1)
+	form = FORM(SELECT(*years,**dict(_name = "year_selector")),INPUT(_type='submit'))
+	form['_action']=URL('search_conditions')
+
+
+	if form.process().accepted:
+         response.flash = 'form accepted'
+         #redirect(URL(r = request, f = 'search'))
+	return dict(form = form)
+
+
+
+def overview_conditions():
+		orderby=[db.condition_guest.guest,db.condition_guest.date]
+		fields = [db.condition_guest.guest,db.condition_guest.date,db.condition_guest.financial,db.condition_guest.family,db.condition_guest.gainings,db.condition_guest.physical,db.condition_guest.mental,db.condition_guest.residence,db.condition_guest.housing,db.condition_guest.justice,db.condition_guest.drug,db.condition_guest.current_study]
+		grid = SQLFORM.grid(db.condition_guest,fields=fields,deletable=False,editable=False,details=False,paginate=10,create=False,ignore_rw=True,csv=True,exportclasses=dict(csv=(CSVExporter, 'CSV'),csv_with_hidden_cols=False,xml=False,html=False,json=False,tsv_with_hidden_cols=False),orderby=orderby)
+		return dict(grid=grid)

@@ -1,0 +1,144 @@
+{{extend 'layout.html'}}
+<style>
+#suggestions { }
+.suggestions { background: white; border: solid 1px #55A6C8; }
+.suggestions DIV { padding: 2px 4px 2px 4px; }
+</style>
+
+<fieldset><u><h4>{{=T('Choose Guest :')}}</u></h4>
+<br/>
+<form action="{{=URL(r=request,f='update_guest')}}" enctype="multipart/form-data" method="post" id="form1">
+<table>
+
+     <tr>
+       <td><label id="zoek__label"for="zoek">{{=T('Guest')}}: </label></td>
+       <td><input type="text" id="zoek" name="zoek" autocomplete="off" onkeyup="jQuery('#suggestions').show(),ajax('guest_selector', ['zoek'], 'suggestions')"  /></td>
+       <td><BUTTON type="button" onclick="jQuery('#gast_naam__row').slideToggle(),jQuery('#gast_geslacht__row').slideToggle(),jQuery('#gast_geboorteDatum__row').slideToggle(),
+       jQuery('#gast_afkomst__row').slideToggle(),jQuery('#gast_nationaliteit__row').slideToggle(),jQuery('#gast_opleidingsNiveau__row').slideToggle(),jQuery('#gast_registration_date__row').slideToggle(),
+       jQuery('#gast_shw__row').slideToggle(),jQuery('#gast_submit__row').slideToggle()"/>{{=T('Toggle')}}</BUTTON></td>
+       <td><BUTTON type="button" value="{{=T('New guest')}}" onclick="location.href='{{=URL(r=request,f='new_guest_contact')}}'">{{=T('New Guest')}}</BUTTON></td>
+     </tr>
+     
+     <tr>
+       <td></td>
+       <td><div style="position: absolute;" id="suggestions"
+      class="suggestions"></div></td> 
+       <td></td>
+     </tr>
+   
+     <tr id="gast_naam__row" class=" hidden">
+       <td><label id="gast_naam__label"
+                  for="gast_naam">{{=T('Name')}}: </label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="naam" value="" id="gast_naam" /></td>
+       <td></td>
+       
+    </tr>   
+
+    
+    <tr id="gast_geslacht__row" class=" hidden">
+       <td><label id="gast_geslacht__label"
+                  for="gast_geslacht">{{=T('Sex')}}: </label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="geslacht" value="" id="gast_geslacht" /></td>
+       <td></td>
+       
+    </tr>
+   
+    <tr id="gast_geboorteDatum__row" class=" hidden">
+       <td><label id="gast_geboorteDatum__label"
+                  for="gast_geboorteDatum">{{=T('Birth date')}}:</label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="geboorteDatum" value="" id="gast_geboorteDatum" /></td>
+       <td></td>
+       
+    </tr>
+              
+    <tr id="gast_afkomst__row" class=" hidden">
+       <td><label id="gast_afkomst__label"
+                  for="gast_afkomst">{{=T('Origin')}}: </label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="afkomst" value="" id="gast_afkomst" /></td>
+       <td></td>
+       
+    </tr>
+    
+    <tr id="gast_nationaliteit__row" class=" hidden">
+       <td><label id="gast_nationaliteit__label"
+                  for="gast_nationaliteit">{{=T('Nationality')}}: </label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="nationaliteit" value="" id="gast_nationaliteit" /></td>
+       <td></td>
+        
+    </tr>
+    
+   <tr id="gast_opleidingsNiveau__row" class=" hidden">
+       <td><label id="gast_opleidingsNiveau__label"
+                  for="gast_opleidingsNiveau">{{=T('Education')}}: </label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="opleidingsNiveau" value="" id="gast_opleidingsNiveau" /></td>
+       <td></td>
+        
+   </tr>
+   
+      <tr id="gast_registration_date__row" class=" hidden">
+       <td><label id="gast_registration_date__label"
+                  for="gast_registration_date">{{=T('Registration date')}}: </label></td>
+       <td><input type="text" class="string" readonly="readonly"
+                  name="registration_date" value="" id="gast_registration_date" /></td>
+       <td></td>
+        
+   </tr>
+   
+
+   
+   <tr id="gast_submit__row" class=" hidden">
+       <td></td>
+       <td><INPUT type="submit" value="{{=T('Edit')}}"/></td>
+       <td></td>
+        
+   </tr>
+   
+     
+
+ </table>
+</form></fieldset>
+
+<fieldset><u><h4>{{=T('Create Contact :')}}</u></h4>
+<br/>
+
+{{=form}}</fieldset>
+
+
+<div style="position: absolute;" id="target" class="target"></div>
+
+<script>
+// Copyright: CodePug.com 2009
+// Do not REMOVE these comments
+// Usage: setReadonly('mySelect');
+jQuery(document).ready(function()
+{setReadonly('contact_guest');});
+function setReadonly( contact_guest ){
+    var selectElement = document.getElementById(contact_guest);
+    if (selectElement){     
+        var parent = selectElement.parentElement;
+        var textValue = selectElement.options[selectElement.options.selectedIndex].innerText;
+        if (!parent){
+            parent=selectElement.parentNode;
+            textValue = selectElement.options[selectElement.options.selectedIndex].text;
+        }
+        var input = document.createElement("input");
+        input.setAttribute("id",'test');
+        input.setAttribute("type","text");
+        input.setAttribute("value",textValue);
+        //input.setAttribute("name",guest);
+        //input.style.background="#cccccc";
+        input.readOnly = true;
+        parent.appendChild(input);
+    }
+    selectElement.style.display="none";
+    
+    
+}
+
+</script>

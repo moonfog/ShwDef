@@ -1,0 +1,101 @@
+# coding: utf8
+# try something like
+def index(): return dict(message="hello from signal.py")
+
+def overview_signals_user():
+
+    fields = [db.signal_user.user, db.signal_user.date,db.signal_user.title , db.signal_user.subject]
+    form = SQLFORM.grid(db.signal_user,fields = fields, ui = 'jquery-ui',details=False,create=False,editable=False,deletable=False,csv=False,paginate=10,
+    links=[lambda row:A('Details',_href=URL("signal_user","signal_details",args=[row.id]))])
+    return dict(form=form)
+    
+    
+def new_signal_user():
+
+    if len(signal_user_errors)==0:
+    
+        fields = ['title','subject','description']
+        form = SQLFORM(db.signal_user,fields=fields,hidden=dict(user=auth.user.id))
+        form.vars.user = auth.user.id
+        session.signal_user_tag_rows=None
+        if form.accepts(request,session):
+            session.signal_userID=form.vars.id
+            session.signal_user_tag_rows=db(db.signal_user_tag.signal_user == session.signal_userID).select()
+            redirect(URL(r=request,f='new_signal_user_tag'))
+        elif form.errors:
+            response.flash = 'form has errors'
+        else:
+            response.flash = 'please fill the form'
+            
+        return dict(form=form)
+        
+    else:
+        session.type_error='signal_user'
+        redirect(URL(r=request,c='error',f='category_value'))
+        
+    
+    
+def new_signal_user_tag():
+    
+    if len(signal_user_tag_errors)==0:
+
+        fields = ['tag']
+        form1 = SQLFORM(db.signal_user_tag,fields=fields,hidden=dict(signal_user=session.signal_userID))
+        form1.vars.signal_user = session.signal_userID
+        if form1.accepts(request,session):
+            response.flash = 'Add tags for this signal'
+        elif form1.errors:
+            response.flash = 'form has errors'
+        else:
+            response.flash = 'Add tags for this signal'
+        
+        fields = [db.signal_user_tag.tag]
+        form2 = SQLFORM.grid(db.signal_user_tag,fields = fields,paginate=10,create=False,csv=False,searchable=False,details=False,editable=False)
+           
+        return dict(form2=form2,form1=form1,signal_user_tag_rows=session.signal_user_tag_rows,id=session.signal_userID)
+    
+    else:
+        session.type_error='signal_user_tag'
+        redirect(URL(r=request,c='error',f='category_value'))
+    
+def manage_signals():
+    return 'manage signals'
+    
+def signal_details():
+
+    signalId = request.args[0]
+    signalRow = db(db.signal_user.id == signalId).select().first()
+    userId=signalRow.user
+    valueId=signalRow.subject
+    
+    userRow=db(db.user.id == userId).select().first()
+    valueRow=db(db.value.id == valueId).select().first()
+    
+    form=FORM(TABLE(TR(TD('Title :'),TD(INPUT(_name='signal_user_title',_readonly='readonly',_type='text'))),
+                    TR(TD('Date :'),TD(INPUT(_name='signal_user_date',_readonly='readonly'))),
+                    TR(TD('User :'),TD(INPUT(_name='signal_user_user',_readonly='readonly',_type='text'))),                    
+                    TR(TD('Subject :'),TD(INPUT(_name='signal_user_subject',_readonly='readonly',_type='text'))),
+                    TR(TD('Description :'),TD(TEXTAREA(_name='signal_user_description',_readonly='readonly',_type='text')))),_id='form1')   
+       
+    form.vars.signal_user_title=signalRow.title
+    form.vars.signal_user_date=signalRow.date
+    form.vars.signal_user_user=userRow.first_name+" "+userRow.last_name
+    form.vars.signal_user_subject=valueRow.val_lang1
+    form.vars.signal_user_description=signalRow.description
+    
+    my_extra_element = TR(TD(INPUT(_name='signal_user_edit','Edit',_type='submit')))
+    form.append(my_extra_element)
+
+    form.validate()
+   
+
+    return dict(form=form)
+    
+
+    
+def overview_signals_by_tag():
+    tag = request.args[0]
+    fields = [db.signal_user.title , db.signal_user.subject, db.signal_user.tags,db.signal_user.date]
+    search = 'tags contain gevangenis'
+    rows = db.executesql('SELECT * from signal_user WHERE tags LIKE "%' + tag + '%"')
+    return dict(form=form)

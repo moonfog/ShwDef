@@ -1,0 +1,137 @@
+# coding: utf8
+# try something like
+import datetime
+
+
+
+def index(): return dict(message="hello from guest.py")
+
+
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def overview_guests():
+        #hier arg in session steken ? 
+        fields=[db.guest.name,db.guest.sex,db.guest.birth_year,db.guest.origin,db.guest.nationality,db.guest.education]   
+        if(isVanType('Straathoekwerkers')):
+          grid = SQLFORM.grid(db.guest.user==auth.user.id,fields=fields,deletable=False,details=False,paginate=10,
+          links = [lambda row:A('Toestand',_href=URL("condition_guest","overview_condition_guest",args=[row.id])),                
+                   lambda row:A('Contacten',_href=URL("contact","overview_contacts",args=[row.id])),
+                   lambda row:A('Details',_href=URL("guest","guest_details",args=[row.id]))])
+          #session.conditionID = row.id proberen werekn met alternatief anders paginatie fucked up 
+        else:
+          grid = SQLFORM.grid(db.guest,fields=fields,deletable=False,paginate=10)  
+       
+        return dict(grid=grid)
+
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def guest_details():
+
+    if len(request.args)!=0:
+        session.guestID = request.args[0]
+    
+    guestId = session.guestID
+    guest_row = db(db.guest.id == guestId).select().first()
+    country_row=db(db.country.id==guest_row.nationality).select().first()
+    origin_row=db(db.country.id==guest_row.origin).select().first()
+    sex_row=db(db.value.id==guest_row.sex).select().first()
+    education_row=db(db.value.id==guest_row.education).select().first()
+    
+    
+    country=''
+    origin=''
+    sex=''
+    education=''
+    
+    if(session._language==lang1):
+        country=country_row.country_lang1
+        origin=origin_row.country_lang1
+        sex=sex_row.val_lang1
+        education=education_row.val_lang1
+        
+    if(session._language==lang2):
+        country=country_row.country_lang2
+        origin=origin_row.country_lang2
+        sex=sex_row.val_lang2
+        education=education_row.val_lang2
+        
+    if(session._language==lang3):
+        country=country_row.country_lang3
+        origin=origin_row.country_lang3
+        sex=sex_row.val_lang3
+        education=education_row.val_lang3
+        
+    form=FORM(TABLE(TR(TD('Name :'),TD(INPUT(_name='guest_name',_readonly='readonly',_type='text'))),
+                    TR(TD('Sex :'),TD(INPUT(_name='guest_sex',_readonly='readonly',_type='text'))),
+                    TR(TD('Age :'),TD(INPUT(_name='guest_age',_readonly='readonly',_type='text'))),
+                    TR(TD('Country :'),TD(INPUT(_name='guest_country',_readonly='readonly',_type='text'))),                    
+                    TR(TD('Origin :'),TD(INPUT(_name='guest_origin',_readonly='readonly',_type='text'))),
+                    TR(TD('Education :'),TD(INPUT(_name='guest_education',_readonly='readonly',_type='text'))),
+                    TR(TD('Registered on :'),TD(INPUT(_name='guest_registration_date',_readonly='readonly',_type='text')))),_id='form1')   
+       
+    form.vars.guest_name=guest_row.name
+    form.vars.guest_sex=sex
+    form.vars.guest_age=guest_row.age
+    form.vars.guest_country=country
+    form.vars.guest_origin=origin
+    form.vars.guest_education=education
+    form.vars.guest_registration_date=guest_row.registration_date
+    
+    my_extra_element1 = TR(TD(A('Edit',_href=URL("edit_guest"),_class='button')))
+    my_extra_element2 = TR(TD(A('Condition',_href=URL("condition_guest"),_class='button')))
+    form.append(my_extra_element1)
+    form.append(my_extra_element2)
+    
+    form.validate()
+    
+
+    
+    ##if not rowscondition :
+    ## rowscondition=None
+    ##else : rowscondition = db(db.condition_guest.guest==guestId).select().as_list()[-1]
+    return dict(form=form)
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def new_guest():
+    #fields=[db.guest.name,db.guest.sex,db.guest.birth_date,db.guest.origin,db.guest.nationality,db.guest.education]
+    
+    if len(guest_errors)==0:
+    
+        form = SQLFORM(db.guest,fields=['name','sex','birth_year','origin','nationality','education'],hidden=dict(shw=auth.user.id))
+        form.vars.user = auth.user.id
+        if form.process().accepted:
+            guestrow= db(db.guest.name == form.vars.name).select()
+            for row in guestrow :
+                guestId = row.id
+                response.flash = 'new guest inserted'
+                redirect(URL(r=request,c='condition_guest',f='first_condition_guest',args=[guestId]))
+        elif form.errors:
+           response.flash = 'form has errors'
+       
+        return dict(form=form)
+        
+    else:
+        session.type_error='guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+
+def edit_guest():
+    record = db(db.guest.id==session.guestID).select().first()
+    fields = ['name' , 'sex', 'birth_year','nationality','origin','education']
+    form = SQLFORM(db.guest,record,fields=fields,showid = False,submit_button = 'Update')
+    if form.process().accepted:       
+        redirect(URL(r=request,f='guest_details')) 
+        response.flash = 'Guest updated'
+    elif form.errors:
+        response.flash = 'form has errors'
+    else:
+        response.flash = 'Update Guest'
+   
+    return dict(form=form)
+    
+def condition_guest():
+    condition_rowx = db(db.condition_guest.guest==session.guestID).select().first()
+    
+    if(condition_rowx!=None): 
+        condition_row=db(db.condition_guest.guest==guestId).select().as_list()[-1]    
+        return dict(form=condition_row.familiy)
+    else: return dict(form='no record')

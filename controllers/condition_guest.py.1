@@ -1,0 +1,270 @@
+# coding: utf8
+# try something like
+import datetime
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def new():
+
+    if len(condition_guest_errors)==0:
+    
+        if len(request.args)!=0:
+            session.guestID = request.args[0]
+            
+        condition_row=get_latest()
+        
+        if(condition_row!=None):
+            fields=['date','financial','family','gainings','physical','mental','residence','housing','justice','drug','current_study']
+            form = SQLFORM(db.condition_guest,fields=fields,hidden=dict(guest = session.guestID))
+            form.vars.guest = session.guestID
+            form.vars.date = datetime.date.today()
+            form.vars.financial = condition_row.financial
+            form.vars.family = condition_row.family
+            form.vars.gainings = condition_row.gainings
+            form.vars.physical = condition_row.physical
+            form.vars.mental = condition_row.mental
+            form.vars.drug = condition_row.drug
+            form.vars.residence = condition_row.residence
+            form.vars.housing = condition_row.housing
+            form.vars.drug = condition_row.drug
+            form.vars.justice = condition_row.justice
+            form.vars.current_study = condition_row.current_study
+            
+            guest_row = db(db.guest.id == session.guestID).select().first()
+            guest_name=H3(guest_row.name)
+            
+            if form.process().accepted:
+                response.flash = 'new condition inserted'
+                redirect(URL(r=request,f='overview',args=[session.guestID]))
+            elif form.errors:
+                response.flash = 'form has errors'
+            response.flash = 'Update condition' 
+            return dict(form=form,guest_name=guest_name)
+
+        else:redirect(URL(r=request,c='condition_guest',f='first'))
+        
+    else:
+        session.type_error='condition_guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def first():
+
+    if len(condition_guest_errors)==0:
+
+        if len(request.args)!=0:
+            session.guestID = request.args[0]
+
+        fields=['date','financial','family','gainings','physical','mental','residence','housing','justice','drug','current_study']
+        form = SQLFORM(db.condition_guest,fields=fields,hidden=dict(guest = session.guestID))
+        form.vars.guest = session.guestID
+        
+        guest_row = db(db.guest.id == session.guestID).select().first()
+        guest_name=H3(guest_row.name)
+        
+        if form.process().accepted:
+            response.flash = 'new condition inserted'
+            redirect(URL(r=request,f='overview',args=[session.guestID]))
+        elif form.errors:
+            response.flash = 'form has errors'
+
+        return dict(guest_name=guest_name,form=form)
+    
+    else:
+        session.type_error='condition_guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def overview():
+
+    if len(condition_guest_errors)==0:
+
+        if len(request.args)!=0:
+            session.guestID = request.args[0]
+        
+        fields=[db.condition_guest.date,db.condition_guest.financial,db.condition_guest.family,db.condition_guest.gainings,db.condition_guest.physical,db.condition_guest.mental,db.condition_guest.residence,db.condition_guest.housing,db.condition_guest.justice,db.condition_guest.drug,db.condition_guest.current_study]
+        
+        headers={'condition_guest.family':'family','condition_guest.financial':'financial'}
+        
+        form = SQLFORM.grid(query_all(),orderby=db.condition_guest.date,searchable=False,deletable=False,editable=False,sortable=True,
+                details=False,csv=False,create=False,fields=fields,headers=headers)
+                
+        my_extra_element1 = TR(TD(_class="w2p_fl"),TD(INPUT(_type="button",_value="Edit",_onclick="window.location='%s';"%URL(r=request,f='edit')))
+        
+        form.append(my_extra_element1)
+       
+        return dict(form=form)
+    
+    else:
+        session.type_error='condition_guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+    
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def details():
+
+    if len(condition_guest_errors)==0:
+    
+        if len(request.args)!=0:
+            session.guestID = request.args[0]
+            
+        condition_row=get_latest()
+        
+        
+        if(condition_row!=None):
+        
+            guest_row=db(db.guest.id==session.guestID).select().first()
+            financial_row=db(db.value.id==condition_row.financial).select().first()
+            family_row=db(db.value.id==condition_row.family).select().first()
+            gainings_row=db(db.value.id==condition_row.gainings).select().first()
+            physical_row=db(db.value.id==condition_row.physical).select().first()
+            mental_row=db(db.value.id==condition_row.mental).select().first()
+            residence_row=db(db.value.id==condition_row.residence).select().first()
+            housing_row=db(db.value.id==condition_row.housing).select().first()
+            drugs_row=db(db.value.id==condition_row.drug).select().first()
+            justice_row=db(db.value.id==condition_row.justice).select().first()
+            current_study_row=db(db.value.id==condition_row.current_study).select().first()
+        
+            financial=''
+            family=''
+            gainings=''
+            physical=''
+            mental=''
+            residence=''
+            housing=''
+            drugs=''
+            justice=''
+            current_study=''
+    
+    
+            if(session._language==lang1):
+                financial=financial_row.val_lang1
+                family=family_row.val_lang1
+                gainings=gainings_row.val_lang1
+                physical=physical_row.val_lang1
+                mental=mental_row.val_lang1
+                residence=residence_row.val_lang1
+                housing=housing_row.val_lang1
+                drugs=drugs_row.val_lang1
+                justice=justice_row.val_lang1
+                current_study=current_study_row.val_lang1
+            
+            if(session._language==lang2):
+                financial=financial_row.val_lang2
+                family=family_row.val_lang2
+                gainings=gainings_row.val_lang2
+                physical=physical_row.val_lang2
+                mental=mental_row.val_lang2
+                residence=residence_row.val_lang2
+                housing=housing_row.val_lang2
+                drugs=drugs_row.val_lang2
+                justice=justice_row.val_lang2
+                current_study=current_study_row.val_lang2
+            
+            if(session._language==lang3):
+                financial=financial_row.val_lang3
+                family=family_row.val_lang3
+                gainings=gainings_row.val_lang3
+                physical=physical_row.val_lang3
+                mental=mental_row.val_lang3
+                residence=residence_row.val_lang3
+                housing=housing_row.val_lang3
+                drugs=drugs_row.val_lang3
+                justice=justice_row.val_lang3
+                current_study=current_study_row.val_lang3
+        
+
+        
+            form=FORM(TABLE(TBODY(
+                    TR(TD(LABEL('Date :'),_class="w2p_f1"),TD(INPUT(_name='condition_date',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Financial :'),_class="w2p_f1"),TD(INPUT(_name='condition_financial',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Family :'),_class="w2p_f1"),TD(INPUT(_name='condition_family',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Gainings :'),_class="w2p_f1"),TD(INPUT(_name='condition_gainings',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Physical :'),_class="w2p_f1"),TD(INPUT(_name='condition_physical',_readonly='readonly',_type='text'),_class="w2p_fw")),                    
+                    TR(TD(LABEL('Mental :'),_class="w2p_f1"),TD(INPUT(_name='condition_mental',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Residence :'),_class="w2p_f1"),TD(INPUT(_name='condition_residence',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Housing :'),_class="w2p_f1"),TD(INPUT(_name='condition_housing',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Justice :'),_class="w2p_f1"),TD(INPUT(_name='condition_justice',_readonly='readonly',_type='text'),_class="w2p_fw")),
+                    TR(TD(LABEL('Drugs :'),_class="w2p_f1"),TD(INPUT(_name='condition_drugs',_readonly='readonly',_type='text'),_class="w2p_fw")),                    
+                    TR(TD(LABEL('Current study :'),_class="w2p_f1"),TD(INPUT(_name='condition_current_study',_readonly='readonly',_type='text'),_class="w2p_fw")))),_id='form1')   
+        
+            
+            form.vars.condition_date=condition_row.date
+            form.vars.condition_financial=financial
+            form.vars.condition_family=family
+            form.vars.condition_gainings=gainings
+            form.vars.condition_physical=physical
+            form.vars.condition_mental=mental
+            form.vars.condition_residence=residence
+            form.vars.condition_housing=housing
+            form.vars.condition_justice=justice
+            form.vars.condition_drugs=drugs
+            form.vars.condition_current_study=current_study
+            my_extra_element1 = TR(TD(_class="w2p_fl"),TD(INPUT(_type="button",_value="Edit",_onclick="window.location='%s';"%URL(r=request,f='edit')),INPUT(_type="button",_value="New",_onclick="window.location='%s';"%URL(r=request,f='new')),INPUT(_type="button",_value="History",_onclick="window.location='%s';"%URL(r=request,f='overview')),_class="w2p_fw"))
+        
+            form[0][0][-1].append(my_extra_element1)
+            
+            form.validate()         
+            
+            guest_name=H3(guest_row.name)
+            
+            return dict(form=form,guest_name=guest_name)
+    
+        else: return dict(form=None,guest_name='')
+    else:
+        session.type_error='condition_guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+
+@auth.requires(auth.has_membership(role='Straathoekwerkers'))
+def edit():
+
+    if len(condition_guest_errors)==0:
+    
+        if len(request.args)!=0:
+            session.guestID = request.args[0]
+            
+        condition_row=get_latest()
+        
+        
+        if(condition_row!=None):
+            fields=['date','financial','family','gainings','physical','mental','residence','housing','justice','drug','current_study']
+            form = SQLFORM(db.condition_guest,condition_row,fields=fields,showid = False,submit_button = 'Update',hidden=dict(guest = session.guestID))
+            form.vars.guest = session.guestID
+                        
+            guest_row = db(db.guest.id == session.guestID).select().first()
+            guest_name=H3(guest_row.name)
+            
+            if form.process().accepted:       
+                redirect(URL(r=request,f='details')) 
+                response.flash = 'Condotion updated'
+            elif form.errors:
+                response.flash = 'form has errors'
+            else:
+                response.flash = 'Update condition'
+   
+            return dict(form=form,guest_name=guest_name)
+    
+    else:
+        session.type_error='condition_guest'
+        redirect(URL(r=request,c='error',f='category_value'))
+    
+def get_latest():
+
+    condition_rows = db(db.condition_guest.guest==session.guestID).select()
+    condition_row=None    
+    
+    if(len(condition_rows)!=0): 
+        cg_id=0
+        for row in condition_rows:
+            if(row.id>cg_id):cg_id=row.id
+                
+        condition_row=db(db.condition_guest.id==cg_id).select().first()
+    
+    return condition_row
+
+def get_all():
+    condition_rows = db(query_all()).select()
+    return condition_rows
+    
+def query_all():
+    query = db.condition_guest.guest==session.guestID
+    return query
